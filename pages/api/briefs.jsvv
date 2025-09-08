@@ -1,0 +1,11 @@
+
+export default async function handler(req, res){
+  const { business = 'Votre entreprise', keywords = '' } = req.query
+  const kw = keywords.split(',').map(s=>s.trim()).filter(Boolean).slice(0,3)
+  const briefs = [
+    `Post Facebook: Présentez comment ${business} aide à ${kw[0]||'mieux servir vos clients'} avec une photo authentique.`,
+    `Carrousel Instagram: 3 avantages concrets de ${business} pour ${kw[1]||'votre quartier'}.`,
+    `Post LinkedIn: Répondez à la question fréquente sur "${kw[2]||'vos horaires et vos délais'}" en 5 points.`
+  ]
+  res.status(200).json({ briefs })
+}
