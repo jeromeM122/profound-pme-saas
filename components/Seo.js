@@ -1,3 +1,5 @@
+<Seo />
+
 import Head from 'next/head'
 export default function Seo({ title="VisiIA — Visibilité IA pour PME/TPE", desc="Mesurez votre présence dans les réponses IA et scannez vos réseaux sociaux. Briefs prêts-à-poster.", url="https://tondomaine.fr" }){
   const org = {
