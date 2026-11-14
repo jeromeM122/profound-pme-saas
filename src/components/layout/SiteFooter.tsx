@@ -20,7 +20,8 @@ export function SiteFooter() {
           <div className="grid content-start gap-2">
             <p className="kicker text-gris">Pages</p>
             <Link href="/" className="text-xl font-bold uppercase hover:text-citron">Accueil</Link>
-            <Link href="/connexion" className="text-xl font-bold uppercase hover:text-citron">Rejoindre</Link>
+            <Link href="/diagnostic" className="text-xl font-bold uppercase hover:text-citron">Diagnostic</Link>
+            <Link href="/jumelles" className="text-xl font-bold uppercase hover:text-citron">Jumelles</Link>
           </div>
           <div className="grid place-items-center gap-4">
             <Wave name="curl" width={180} className="text-citron" />

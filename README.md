@@ -47,6 +47,6 @@ Pourquoi `SameSite=Lax` et pas `Strict` : une visiteuse arrivant depuis un lien 
 ## Feuille de route
 
 1. ✅ Socle, sécurité & authentification
-2. Quiz « Hair Diagnostic Engine » & profil social
+2. ✅ Quiz « Hair Diagnostic Engine » & profil social (`/diagnostic`, `/jumelles`, `/@pseudo`, `/compte`)
 3. Catalogue hybride e-commerce / affiliation (`/go/[offerId]`, Stripe)
 4. Vidéos sociales (façades, modération, filtres par texture)

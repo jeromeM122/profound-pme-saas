@@ -12,15 +12,25 @@ export async function SiteHeader() {
         <Link href="/" aria-label="tresser.fr — accueil" className="p-1">
           <Logo tone="blanc" height={24} />
         </Link>
-        <nav aria-label="Compte">
+        <nav aria-label="Principale" className="flex items-center gap-2">
           {session?.user ? (
-            <Link href="/compte" className="btn-ghost min-h-10 px-4">
-              <ButtonLabel>Mon compte</ButtonLabel>
-            </Link>
+            <>
+              <Link href="/jumelles" className="hidden px-3 text-sm font-bold uppercase hover:text-citron sm:block">
+                Jumelles
+              </Link>
+              <Link href="/compte" className="btn-ghost min-h-10 px-4">
+                <ButtonLabel>Mon compte</ButtonLabel>
+              </Link>
+            </>
           ) : (
-            <Link href="/connexion" className="btn-primary min-h-10 px-4">
-              <ButtonLabel>Connexion</ButtonLabel>
-            </Link>
+            <>
+              <Link href="/diagnostic" className="hidden px-3 text-sm font-bold uppercase hover:text-citron sm:block">
+                Diagnostic
+              </Link>
+              <Link href="/connexion" className="btn-primary min-h-10 px-4">
+                <ButtonLabel>Connexion</ButtonLabel>
+              </Link>
+            </>
           )}
         </nav>
       </div>

@@ -38,8 +38,8 @@ export default function Home() {
             Un lieu pensé pour les textures, les boucles, les histoires qu’on porte sur la tête.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/connexion" className="btn-primary">
-              <ButtonLabel>Créer mon profil capillaire</ButtonLabel>
+            <Link href="/diagnostic" className="btn-primary">
+              <ButtonLabel>Faire mon diagnostic</ButtonLabel>
             </Link>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function Home() {
           </ul>
           <div className="mt-14 grid justify-items-center gap-6 text-center">
             <p className="text-2xl font-light">Ton profil n’est pas dans une case ? Le diagnostic affine tout.</p>
-            <Link href="/connexion" className="btn-primary">
+            <Link href="/diagnostic" className="btn-primary">
               <ButtonLabel>Faire mon diagnostic</ButtonLabel>
             </Link>
           </div>

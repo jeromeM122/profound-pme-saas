@@ -9,6 +9,7 @@ import type { Role } from '@/generated/prisma/enums'
 import { db } from '@/server/db'
 import { env } from '@/server/env'
 import { sendMagicLink } from '@/server/email/magic-link'
+import { linkQuizToUser } from '@/server/hair/profile'
 
 declare module 'next-auth' {
   interface Session {
@@ -100,6 +101,17 @@ function buildConfig(): NextAuthConfig {
         : {}),
     },
     pages: { signIn: '/connexion', verifyRequest: '/connexion/verification', error: '/connexion' },
+    events: {
+      async signIn({ user }) {
+        // Attach the anonymous diagnostic (signed cookie) to the account. Never blocks sign-in.
+        if (!user.id) return
+        try {
+          await linkQuizToUser(user.id)
+        } catch (err) {
+          console.error('[auth] linkQuizToUser failed', err instanceof Error ? err.message : err)
+        }
+      },
+    },
     callbacks: {
       signIn({ user, account, profile }) {
         if (user.deletedAt) return false

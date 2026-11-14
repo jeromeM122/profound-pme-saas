@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   typedRoutes: true,
+  /** Public profiles live at /@handle (served by /membre/[handle]). */
+  async rewrites() {
+    return [{ source: '/@:handle', destination: '/membre/:handle' }]
+  },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
