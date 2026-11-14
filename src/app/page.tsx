@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Wave } from '@/components/brand/Wave'
 import type { WaveName } from '@/components/brand/wave-paths'
-import { Marquee } from '@/components/motion/Marquee'
 import { Reveal } from '@/components/motion/Reveal'
 import { ButtonLabel } from '@/components/ui/ButtonLabel'
 
@@ -20,134 +19,142 @@ const TEXTURES: { code: string; label: string; wave: WaveName }[] = [
   { code: '4C', label: 'Crépus très serrés', wave: 'curl' },
 ]
 
-const TICKER = ['Ma texture, ma couronne', 'Nos cheveux parlent', 'Chaque tresse est une archive vivante', 'Nos racines ont du style']
+const RITUAL = [
+  { n: 'I', title: 'Le diagnostic', text: 'Texture, porosité, cuir chevelu, objectifs : six questions pour révéler ton profil capillaire.' },
+  { n: 'II', title: 'Les jumelles', text: 'Suis les routines de celles et ceux qui partagent exactement ton profil.' },
+  { n: 'III', title: 'Le rituel', text: 'Des soins choisis pour ta texture, et vus en vidéo sur des cheveux comme les tiens.' },
+] as const
 
 export default function Home() {
   return (
     <>
-      {/* HERO */}
-      <section className="relative grid min-h-[100svh] place-items-center overflow-hidden px-4 pt-24 pb-16">
-        <div className="grid max-w-6xl justify-items-center gap-8 text-center">
-          <p className="kicker text-gris">Hair-social commerce</p>
-          <h1 className="display text-[13vw] sm:text-[9vw] xl:text-[8.5rem]">
+      {/* HERO — editorial split */}
+      <section className="mx-auto grid max-w-7xl items-center gap-14 px-4 pt-16 pb-24 sm:px-8 md:grid-cols-[1.1fr_1fr] md:pt-24">
+        <div className="grid gap-8">
+          <p className="kicker text-or">Diagnostic capillaire</p>
+          <h1 className="display text-5xl sm:text-7xl lg:text-[5.5rem]">
             Ma texture,
             <br />
-            ma <span className="accent">couronne</span>.
+            <span className="accent">ma couronne.</span>
           </h1>
-          <p className="max-w-xl text-lg font-light text-ivoire/80 sm:text-xl">
+          <p className="max-w-md text-lg leading-relaxed text-taupe">
             Un lieu pensé pour les textures, les boucles, les histoires qu’on porte sur la tête.
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-wrap items-center gap-6">
             <Link href="/diagnostic" className="btn-primary">
-              <ButtonLabel>Faire mon diagnostic</ButtonLabel>
+              <ButtonLabel>Découvrir mon profil</ButtonLabel>
+            </Link>
+            <Link href="/jumelles" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
+              La communauté
             </Link>
           </div>
         </div>
 
-        {/* Floating info card */}
-        <aside className="absolute bottom-6 left-4 hidden w-56 rounded-2xl border border-ivoire/15 bg-nuit/80 p-4 backdrop-blur sm:left-8 md:block">
-          <p className="kicker text-gris">Diagnostic</p>
-          <p className="mt-3 text-sm font-bold uppercase">Ton profil en 60 secondes</p>
-          <div className="mt-3 border-t border-ivoire/15 pt-3">
-            <Wave name="curl" width={150} className="text-citron" />
+        {/* Champagne halo — product-spotlight composition (no photography yet) */}
+        <div aria-hidden className="relative mx-auto aspect-[4/5] w-full max-w-md">
+          <div className="absolute inset-0 bg-sable" />
+          <div className="absolute top-[12%] left-1/2 aspect-square w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_35%_30%,#fbf8f3_0%,#efe2c8_45%,#d9bf8c_100%)] opacity-90" />
+          <div className="absolute top-[12%] left-1/2 aspect-square w-[72%] -translate-x-1/2 rounded-full border border-or-clair/70" />
+          <div className="absolute top-[17%] left-1/2 aspect-square w-[62%] -translate-x-1/2 rounded-full border border-or-clair/40" />
+          <div className="absolute inset-x-0 bottom-[9%] grid justify-items-center gap-3">
+            <Wave name="curl" width={180} className="text-or" />
+            <p className="kicker text-[0.6rem] text-taupe">De 1A à 4C</p>
           </div>
-        </aside>
-        <Wave name="swell" width={420} className="pointer-events-none absolute -right-24 top-1/3 hidden text-bleu lg:block" />
+        </div>
       </section>
 
-      {/* TICKER */}
-      <Marquee items={TICKER} className="bg-citron py-4 font-mono text-sm font-bold uppercase text-noir sm:text-base" />
-
-      {/* STATEMENT */}
-      <section className="px-4 py-28 sm:py-40">
-        <Reveal className="mx-auto max-w-6xl text-center">
-          <p className="kicker mb-8 text-gris">Le manifeste</p>
-          <p className="display text-[9vw] sm:text-6xl lg:text-7xl">
-            Tresser, c’est <span className="accent">réunir</span> : des rituels, des <span className="accent">histoires</span>,
-            des <span className="accent">héritages</span>. Chaque tresse est une archive vivante.
+      {/* MANIFESTE */}
+      <section className="bg-perle px-4 py-28 sm:py-36">
+        <Reveal className="mx-auto grid max-w-4xl justify-items-center gap-10 text-center">
+          <Wave name="wave" width={140} className="text-or" />
+          <p className="text-3xl leading-snug font-light sm:text-5xl sm:leading-tight">
+            Tresser, c’est <span className="accent">réunir</span> : des rituels, des histoires, des héritages.
           </p>
+          <p className="kicker text-taupe">Chaque tresse est une archive vivante</p>
         </Reveal>
       </section>
 
-      {/* TWO WORLDS — diagnostic / communauté */}
-      <section className="mx-auto grid max-w-7xl gap-3 px-2 sm:grid-cols-2 sm:px-3">
-        <Reveal className="grid min-h-80 content-between sm:min-h-[28rem] rounded-[2rem] bg-citron p-8 text-noir sm:p-12">
-          <p className="kicker">01 — Diagnostic</p>
-          <div className="grid gap-4">
-            <h2 className="display text-6xl sm:text-7xl">
-              <span className="font-light italic">Mon</span>
-              <br />
-              profil
-            </h2>
-            <p className="max-w-sm text-lg">Texture, porosité, cuir chevelu, objectifs : un catalogue et un feed taillés pour toi.</p>
-          </div>
+      {/* LE RITUEL — three steps */}
+      <section className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
+        <Reveal className="mb-16 grid justify-items-center gap-4 text-center">
+          <p className="kicker text-or">Le rituel tresser</p>
+          <h2 className="display text-4xl sm:text-5xl">Trois gestes</h2>
         </Reveal>
-        <Reveal className="grid min-h-80 content-between sm:min-h-[28rem] rounded-[2rem] bg-bleu p-8 text-blanc sm:p-12">
-          <p className="kicker">02 — Communauté</p>
-          <div className="grid gap-4">
-            <h2 className="display text-6xl sm:text-7xl">
-              <span className="font-light italic">Mes</span>
-              <br />
-              jumelles
-            </h2>
-            <p className="max-w-sm text-lg">Suis celles et ceux qui ont exactement ton profil, leurs routines et leur salle de bain.</p>
-          </div>
-        </Reveal>
+        <ol className="grid border-y border-ligne md:grid-cols-3 md:divide-x md:divide-ligne">
+          {RITUAL.map((s) => (
+            <li key={s.n}>
+              <Reveal className="grid gap-5 px-6 py-12 text-center md:px-10">
+                <span className="font-light italic text-or text-3xl">{s.n}</span>
+                <h3 className="kicker text-sm text-encre">{s.title}</h3>
+                <p className="leading-relaxed text-taupe">{s.text}</p>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-14 flex justify-center">
+          <Link href="/diagnostic" className="btn-ghost">
+            <ButtonLabel>Commencer le diagnostic</ButtonLabel>
+          </Link>
+        </div>
       </section>
 
-      {/* TEXTURES HALL */}
-      <section className="mt-28 bg-nuit px-4 py-24 curve-top sm:px-8">
+      {/* TEXTURES */}
+      <section className="bg-sable px-4 py-28 sm:px-8">
         <div className="mx-auto max-w-7xl">
-          <Reveal className="mb-12 grid gap-6 sm:grid-cols-2 sm:items-end">
-            <h2 className="display text-5xl sm:text-7xl">
-              Toutes
-              <br />
-              <span className="accent">les textures</span>
-            </h2>
-            <p className="max-w-md text-ivoire/70 sm:justify-self-end">
-              Du raide au crépu, chaque profil a sa place. Trouve le tien et vois les produits appliqués sur des cheveux comme les tiens.
+          <Reveal className="mb-14 grid gap-6 md:grid-cols-2 md:items-end">
+            <div className="grid gap-4">
+              <p className="kicker text-or">Toutes les textures</p>
+              <h2 className="display text-4xl sm:text-5xl">
+                Du raide <span className="accent">au crépu</span>
+              </h2>
+            </div>
+            <p className="max-w-md leading-relaxed text-taupe md:justify-self-end">
+              Chaque profil a sa place. Trouve le tien et découvre les soins appliqués sur des cheveux comme les tiens.
             </p>
           </Reveal>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-px bg-ligne sm:grid-cols-3 lg:grid-cols-4">
             {TEXTURES.map((t) => (
-              <li key={t.code}>
-                <div className="group relative grid aspect-square place-items-center overflow-hidden rounded-2xl border border-citron/70 transition-colors duration-500 ease-brand hover:bg-citron hover:text-noir">
-                  <span className="display text-6xl sm:text-7xl">{t.code}</span>
-                  <Wave name={t.wave} width={110} className="absolute top-6 text-citron transition-colors group-hover:text-noir" />
-                  {/* notched label tab */}
-                  <span className="absolute right-0 bottom-0 rounded-tl-2xl border-t border-l border-citron/70 bg-nuit px-3 py-1.5 text-xs font-bold group-hover:border-noir group-hover:bg-citron">
-                    {t.label}
-                  </span>
+              <li key={t.code} className="group grid aspect-square content-between bg-perle p-6 lg:aspect-[5/4] transition-colors duration-700 ease-brand hover:bg-creme">
+                <Wave name={t.wave} width={90} className="text-or-clair transition-colors duration-700 group-hover:text-or" />
+                <div className="grid gap-2">
+                  <span className="text-5xl font-extralight sm:text-6xl">{t.code}</span>
+                  <span className="kicker text-[0.62rem] text-taupe">{t.label}</span>
                 </div>
               </li>
             ))}
           </ul>
-          <div className="mt-14 grid justify-items-center gap-6 text-center">
-            <p className="text-2xl font-light">Ton profil n’est pas dans une case ? Le diagnostic affine tout.</p>
-            <Link href="/diagnostic" className="btn-primary">
-              <ButtonLabel>Faire mon diagnostic</ButtonLabel>
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* VIDEO PROMISE */}
-      <section className="bg-nuit px-4 pt-8 pb-28">
-        <Reveal className="mx-auto grid max-w-5xl items-center gap-12 md:grid-cols-[1fr_auto]">
-          <div className="grid gap-6">
-            <p className="kicker text-gris">03 — Vu sur ta texture</p>
-            <h2 className="display text-5xl sm:text-6xl">
-              Nos cheveux <span className="accent">parlent</span>.
-            </h2>
-            <p className="max-w-md text-lg text-ivoire/70">
-              Chaque produit montré en vidéo par la communauté — TikTok, Reels, Shorts — filtré sur ta texture.
-            </p>
-          </div>
-          <div aria-hidden className="mx-auto grid aspect-[9/16] w-56 place-items-center rounded-[2.25rem] border-4 border-carbone bg-noir">
-            <span className="grid size-16 place-items-center rounded-full bg-citron">
-              <span className="ml-1 size-0 border-y-[10px] border-l-[16px] border-y-transparent border-l-noir" />
+      <section className="mx-auto grid max-w-6xl items-center gap-16 px-4 py-28 sm:px-8 md:grid-cols-[1fr_auto]">
+        <Reveal className="grid gap-6">
+          <p className="kicker text-or">Vu sur ta texture</p>
+          <h2 className="display text-4xl sm:text-5xl">
+            Nos cheveux <span className="accent">parlent</span>
+          </h2>
+          <p className="max-w-md leading-relaxed text-taupe">
+            Chaque soin montré en vidéo par la communauté — TikTok, Reels, Shorts — sur des cheveux comme les tiens.
+          </p>
+        </Reveal>
+        <Reveal className="mx-auto">
+          <div aria-hidden className="grid aspect-[9/16] w-52 place-items-center rounded-[2rem] border border-ligne bg-perle shadow-[0_30px_60px_-30px_rgb(28_24_20/0.35)]">
+            <span className="grid size-16 place-items-center rounded-full border border-or-clair bg-creme">
+              <span className="ml-1 size-0 border-y-[8px] border-l-[13px] border-y-transparent border-l-or" />
             </span>
           </div>
+        </Reveal>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-ligne px-4 py-24 text-center">
+        <Reveal className="mx-auto grid max-w-2xl justify-items-center gap-8">
+          <p className="display text-3xl sm:text-4xl">
+            Ton profil, <span className="accent">révélé</span> en soixante secondes
+          </p>
+          <Link href="/diagnostic" className="btn-primary">
+            <ButtonLabel>Faire mon diagnostic</ButtonLabel>
+          </Link>
         </Reveal>
       </section>
     </>

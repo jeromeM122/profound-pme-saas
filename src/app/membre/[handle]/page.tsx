@@ -49,9 +49,9 @@ export default async function MemberPage({ params }: Props) {
   const hp = p.hairProfile
 
   return (
-    <div className="px-4 pt-28 pb-24">
+    <div className="px-4 pt-14 pb-24">
       {!p.isPublic && isOwner && (
-        <p className="mx-auto mb-6 max-w-5xl rounded-lg bg-citron px-4 py-3 text-sm font-bold text-noir">
+        <p className="mx-auto mb-6 max-w-5xl bg-champagne px-4 py-3 text-sm font-normal text-encre">
           Ton profil est privé : toi seule le vois. Rends-le public depuis ton compte.
         </p>
       )}
@@ -60,16 +60,16 @@ export default async function MemberPage({ params }: Props) {
         <div className="grid gap-4">
           <div>
             <h1 className="display text-5xl sm:text-7xl">{p.name || p.handle}</h1>
-            <p className="font-mono text-gris">@{p.handle}</p>
+            <p className="font-mono text-taupe">@{p.handle}</p>
           </div>
           {hp?.badgePublic && <HairBadge texture={hp.texture} porosity={hp.porosity} goals={hp.goals} />}
-          {p.bio && <p className="max-w-xl whitespace-pre-line text-lg text-ivoire/80">{p.bio}</p>}
+          {p.bio && <p className="max-w-xl whitespace-pre-line text-lg text-encre/80">{p.bio}</p>}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <p>
-              <span className="text-xl font-bold">{p._count.followers}</span> <span className="text-gris">abonné·es</span>
+              <span className="text-xl font-normal">{p._count.followers}</span> <span className="text-taupe">abonné·es</span>
             </p>
             <p>
-              <span className="text-xl font-bold">{p._count.following}</span> <span className="text-gris">abonnements</span>
+              <span className="text-xl font-normal">{p._count.following}</span> <span className="text-taupe">abonnements</span>
             </p>
             {isOwner ? (
               <Link href="/compte" className="btn-ghost min-h-10 px-4">
@@ -89,9 +89,9 @@ export default async function MemberPage({ params }: Props) {
                 const url = canonicalSocialUrl(s.platform, s.handle)
                 return url ? (
                   <li key={s.platform}>
-                    <a href={url} target="_blank" rel="me noopener noreferrer nofollow ugc" className="inline-flex items-center gap-2 rounded-full border border-ivoire/20 px-4 py-2 text-sm hover:border-citron hover:text-citron">
-                      <span className="font-bold">{SOCIAL_LABEL[s.platform]}</span>
-                      <span className="font-mono text-gris">@{s.handle}</span>
+                    <a href={url} target="_blank" rel="me noopener noreferrer nofollow ugc" className="inline-flex items-center gap-2 rounded-full border border-encre/20 px-4 py-2 text-sm hover:border-or hover:text-or">
+                      <span className="font-normal">{SOCIAL_LABEL[s.platform]}</span>
+                      <span className="font-mono text-taupe">@{s.handle}</span>
                     </a>
                   </li>
                 ) : null
@@ -106,16 +106,16 @@ export default async function MemberPage({ params }: Props) {
           <h2 className="display text-4xl sm:text-5xl">
             Ma salle <span className="accent">de bain</span>
           </h2>
-          <Wave name="tight" width={100} className="hidden text-citron sm:block" />
+          <Wave name="tight" width={100} className="hidden text-or sm:block" />
         </div>
         {p.bathroom.length === 0 ? (
-          <p className="card text-gris">{isOwner ? 'Ajoute bientôt les produits que tu utilises depuis le catalogue.' : 'Aucun produit partagé pour l’instant.'}</p>
+          <p className="card text-taupe">{isOwner ? 'Ajoute bientôt les produits que tu utilises depuis le catalogue.' : 'Aucun produit partagé pour l’instant.'}</p>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {p.bathroom.map((b) => (
               <li key={b.product.slug} className="card grid gap-2">
-                <p className="kicker text-gris">{b.product.brand.name}</p>
-                <p className="text-lg font-bold">{b.product.name}</p>
+                <p className="kicker text-taupe">{b.product.brand.name}</p>
+                <p className="text-lg font-normal">{b.product.name}</p>
                 <p className="text-sm">
                   {STATUS_LABEL[b.status]}
                   {b.rating ? ` · ${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}` : ''}

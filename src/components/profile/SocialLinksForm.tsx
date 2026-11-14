@@ -15,16 +15,16 @@ function Row({ platform, current }: { platform: SocialPlatform; current?: { hand
   const [state, action, pending] = useActionState<FormState, FormData>(saveSocialLink, {})
   const error = state.errors?.[platform]
   return (
-    <div className="grid gap-2 border-b border-ivoire/10 pb-4 last:border-0 last:pb-0">
-      <p className="text-sm font-bold">{SOCIAL_LABEL[platform]}</p>
+    <div className="grid gap-2 border-b border-encre/10 pb-4 last:border-0 last:pb-0">
+      <p className="text-sm font-normal">{SOCIAL_LABEL[platform]}</p>
       {current ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-carbone px-4 py-3">
-          <a href={current.url} target="_blank" rel="noopener noreferrer nofollow" className="font-mono hover:text-citron">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-sable px-4 py-3">
+          <a href={current.url} target="_blank" rel="noopener noreferrer nofollow" className="font-mono hover:text-or">
             @{current.handle}
           </a>
           <form action={removeSocialLink}>
             <input type="hidden" name="platform" value={platform} />
-            <button className="text-sm text-gris underline underline-offset-4 hover:text-citron">Retirer</button>
+            <button className="text-sm text-taupe underline underline-offset-4 hover:text-or">Retirer</button>
           </form>
         </div>
       ) : (
@@ -39,7 +39,7 @@ function Row({ platform, current }: { platform: SocialPlatform; current?: { hand
           </button>
         </form>
       )}
-      {error && <p className="text-sm font-bold text-citron">{error}</p>}
+      {error && <p className="text-sm font-normal text-or">{error}</p>}
     </div>
   )
 }

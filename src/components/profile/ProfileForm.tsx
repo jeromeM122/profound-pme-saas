@@ -9,7 +9,7 @@ export function ProfileForm({ defaults, hasDiagnostic }: Props) {
   const [state, action, pending] = useActionState<FormState, FormData>(updateProfile, {})
   const err = (k: string) =>
     state.errors?.[k] ? (
-      <p id={`${k}-err`} className="text-sm font-bold text-citron">
+      <p id={`${k}-err`} className="text-sm font-normal text-or">
         {state.errors[k]}
       </p>
     ) : null
@@ -17,45 +17,45 @@ export function ProfileForm({ defaults, hasDiagnostic }: Props) {
   return (
     <form action={action} className="grid gap-5" noValidate>
       <div className="grid gap-2">
-        <label htmlFor="handle" className="text-sm font-bold">
+        <label htmlFor="handle" className="text-sm font-normal">
           Pseudo public
         </label>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-gris">@</span>
+          <span className="font-mono text-taupe">@</span>
           <input id="handle" name="handle" defaultValue={defaults.handle} required minLength={3} maxLength={30} autoComplete="username" aria-describedby="handle-err" className="field font-mono" />
         </div>
         {err('handle')}
       </div>
       <div className="grid gap-2">
-        <label htmlFor="name" className="text-sm font-bold">
+        <label htmlFor="name" className="text-sm font-normal">
           Nom affiché
         </label>
         <input id="name" name="name" defaultValue={defaults.name} maxLength={60} autoComplete="name" aria-describedby="name-err" className="field" />
         {err('name')}
       </div>
       <div className="grid gap-2">
-        <label htmlFor="bio" className="text-sm font-bold">
+        <label htmlFor="bio" className="text-sm font-normal">
           Bio
         </label>
         <textarea id="bio" name="bio" defaultValue={defaults.bio} maxLength={280} rows={4} aria-describedby="bio-err" className="field py-3" />
         {err('bio')}
       </div>
       <label className="flex items-start gap-3">
-        <input type="checkbox" name="isPublic" defaultChecked={defaults.isPublic} className="mt-1 size-5 accent-citron" />
+        <input type="checkbox" name="isPublic" defaultChecked={defaults.isPublic} className="mt-1 size-5 accent-or" />
         <span>
-          <span className="font-bold">Profil public</span>
-          <span className="block text-sm text-gris">Visible par tous sur tresser.fr/@pseudo, et dans les jumelles capillaires.</span>
+          <span className="font-normal">Profil public</span>
+          <span className="block text-sm text-taupe">Visible par tous sur tresser.fr/@pseudo, et dans les jumelles capillaires.</span>
         </span>
       </label>
       <label className={`flex items-start gap-3 ${hasDiagnostic ? '' : 'opacity-50'}`}>
-        <input type="checkbox" name="badgePublic" defaultChecked={defaults.badgePublic} disabled={!hasDiagnostic} className="mt-1 size-5 accent-citron" />
+        <input type="checkbox" name="badgePublic" defaultChecked={defaults.badgePublic} disabled={!hasDiagnostic} className="mt-1 size-5 accent-or" />
         <span>
-          <span className="font-bold">Afficher mon badge capillaire</span>
-          <span className="block text-sm text-gris">Ta texture, ta porosité et ta routine principale apparaîtront sur ton profil public.</span>
+          <span className="font-normal">Afficher mon badge capillaire</span>
+          <span className="block text-sm text-taupe">Ta texture, ta porosité et ta routine principale apparaîtront sur ton profil public.</span>
         </span>
       </label>
       {state.message && (
-        <p role="status" className={`text-sm font-bold ${state.ok ? 'text-citron' : 'text-ivoire'}`}>
+        <p role="status" className={`text-sm font-normal ${state.ok ? 'text-or' : 'text-encre'}`}>
           {state.message}
         </p>
       )}

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   icons: { icon: '/brand/favicon.svg' },
 }
 
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#000000' }
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#f6f1e9' }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Reading request headers opts every page into dynamic rendering, which the per-request CSP nonce requires.
@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-dvh flex-col">
         <a
           href="#contenu"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-citron focus:px-4 focus:py-2 focus:font-bold focus:text-noir"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus: focus:bg-champagne focus:px-4 focus:py-2 focus:font-normal focus:text-encre"
         >
           Aller au contenu
         </a>

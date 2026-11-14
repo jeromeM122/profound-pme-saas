@@ -101,17 +101,17 @@ export function QuizFlow() {
   const option = (name: string, checked: boolean, onChange: (e: ChangeEvent<HTMLInputElement>) => void, title: string, hint?: string, type: 'radio' | 'checkbox' = 'radio', disabled = false) => (
     <label
       key={title}
-      className={`group flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-2xl border px-5 py-4 transition-colors duration-300 ease-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-citron ${
-        checked ? 'border-citron bg-citron text-noir' : 'border-ivoire/20 hover:border-citron'
+      className={`group flex min-h-16 cursor-pointer items-center justify-between gap-4 border px-5 py-4 transition-colors duration-300 ease-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-or ${
+        checked ? 'border-or bg-champagne text-encre' : 'border-encre/20 hover:border-or'
       } ${disabled ? 'cursor-not-allowed opacity-40' : ''}`}
     >
       <span className="grid gap-0.5">
-        <span className="text-lg font-bold">{title}</span>
-        {hint && <span className={`text-sm ${checked ? 'text-noir/70' : 'text-gris'}`}>{hint}</span>}
+        <span className="text-lg font-normal">{title}</span>
+        {hint && <span className={`text-sm ${checked ? 'text-encre/70' : 'text-taupe'}`}>{hint}</span>}
       </span>
       <input type={type} name={name} checked={checked} onChange={onChange} disabled={disabled} className="sr-only" />
-      <span aria-hidden className={`grid size-6 shrink-0 place-items-center rounded-full border-2 ${checked ? 'border-noir bg-noir' : 'border-ivoire/40'}`}>
-        {checked && <span className="size-2 rounded-full bg-citron" />}
+      <span aria-hidden className={`grid size-6 shrink-0 place-items-center rounded-full border-2 ${checked ? 'border-encre bg-encre' : 'border-encre/40'}`}>
+        {checked && <span className="size-2 rounded-full bg-champagne" />}
       </span>
     </label>
   )
@@ -122,10 +122,10 @@ export function QuizFlow() {
       <div className="grid gap-3">
         <div className="flex gap-1.5" role="progressbar" aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1} aria-label="Progression du diagnostic">
           {STEPS.map((s, i) => (
-            <span key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${i <= step ? 'bg-citron' : 'bg-ivoire/15'}`} />
+            <span key={s} className={`h-px flex-1 transition-colors duration-700 ${i <= step ? 'bg-or' : 'bg-encre/15'}`} />
           ))}
         </div>
-        <p className="kicker text-gris">
+        <p className="kicker text-taupe">
           Étape {step + 1}/{STEPS.length} — {STEPS[step]}
         </p>
       </div>
@@ -145,19 +145,19 @@ export function QuizFlow() {
                   type="button"
                   aria-pressed={family === f.family}
                   onClick={() => setFamily(f.family)}
-                  className={`grid gap-3 rounded-2xl border p-4 text-left transition-colors duration-300 ease-brand ${
-                    family === f.family ? 'border-citron bg-citron text-noir' : 'border-ivoire/20 hover:border-citron'
+                  className={`grid gap-3 border p-4 text-left transition-colors duration-300 ease-brand ${
+                    family === f.family ? 'border-or bg-champagne text-encre' : 'border-encre/20 hover:border-or'
                   }`}
                 >
-                  <Wave name={f.wave} width={96} className={family === f.family ? 'text-noir' : 'text-citron'} />
-                  <span className="text-lg font-bold uppercase">{f.title}</span>
-                  <span className={`text-sm ${family === f.family ? 'text-noir/70' : 'text-gris'}`}>{f.hint}</span>
+                  <Wave name={f.wave} width={96} className={family === f.family ? 'text-encre' : 'text-or'} />
+                  <span className="text-lg font-normal uppercase">{f.title}</span>
+                  <span className={`text-sm ${family === f.family ? 'text-encre/70' : 'text-taupe'}`}>{f.hint}</span>
                 </button>
               ))}
             </div>
             {family && (
               <div className="grid gap-3 animate-step-in" role="radiogroup" aria-label="Précise ta texture">
-                <p className="kicker text-gris">Précise</p>
+                <p className="kicker text-taupe">Précise</p>
                 {entries(TEXTURES)
                   .filter(([, t]) => t.family === family)
                   .map(([key, t]) => option('texture', draft.texture === key, (e) => pick('texture', key, e), `${t.code} — ${t.label}`))}
@@ -195,7 +195,7 @@ export function QuizFlow() {
                 Tes <span className="accent">objectifs</span> ?
               </h1>
             </legend>
-            <p className="text-gris">Jusqu’à {MAX_GOALS}. Le premier choisi devient ta routine principale.</p>
+            <p className="text-taupe">Jusqu’à {MAX_GOALS}. Le premier choisi devient ta routine principale.</p>
             {entries(GOALS).map(([key, g]) => {
               const checked = draft.goals.includes(key)
               const rank = draft.goals.indexOf(key)
@@ -221,19 +221,19 @@ export function QuizFlow() {
               Ton <span className="accent">profil</span>
             </h1>
             {answers.success ? (
-              <p className="w-fit rounded-xl bg-citron px-4 py-3 font-mono text-base font-bold text-noir sm:text-lg">{computeDiagnostic(answers.data).badge}</p>
+              <p className="w-fit bg-champagne px-4 py-3 font-mono text-base font-normal text-encre sm:text-lg">{computeDiagnostic(answers.data).badge}</p>
             ) : (
-              <p className="text-gris">Il manque des réponses : reviens aux étapes précédentes.</p>
+              <p className="text-taupe">Il manque des réponses : reviens aux étapes précédentes.</p>
             )}
-            <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-ivoire/20 p-4 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-citron">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 size-5 shrink-0 accent-citron" />
-              <span className="text-sm text-ivoire/80">
+            <label className="flex cursor-pointer items-start gap-3 border border-encre/20 p-4 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-or">
+              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 size-5 shrink-0 accent-or" />
+              <span className="text-sm text-encre/80">
                 J’accepte que tresser.fr enregistre ces réponses pour personnaliser mes recommandations. Elles restent privées, sauf si je choisis
                 d’afficher mon badge sur mon profil. Je peux les supprimer à tout moment depuis mon compte.
               </span>
             </label>
             {error && (
-              <p role="alert" className="rounded-lg bg-citron px-4 py-3 text-sm font-bold text-noir">
+              <p role="alert" className="bg-champagne px-4 py-3 text-sm font-normal text-encre">
                 {error}
               </p>
             )}

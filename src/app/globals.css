@@ -1,82 +1,108 @@
 @import 'tailwindcss';
 
 /*
- * Charte graphique tresser.fr — dark "night drive" theme
- *  Couleurs web : Jaune citron #E8F800 · Bleu #3366FF · Noir #000000 (+ blanc)
- *  Teintes claires des applats (p.4) : lavande, menthe
- *  Typo : Apercu (+ Apercu Mono) — see src/app/fonts.ts
- *  Logo : blanc sur fond foncé, noir sur fond clair (jamais d'autre couleur).
+ * tresser.fr — "Maison" theme (luxury beauty direction)
+ *  Crème · encre · or champagne. Sober, airy, editorial; brilliance comes from fine gold
+ *  hairlines and a slow champagne sheen, never from loud colour.
+ *  Typography: Apercu (DM Sans substitute) in light weights + Apercu Mono for labels.
+ *  Logo: black on cream, white on dark (charte graphique).
  *
- * Accessibility (WCAG AA): citron on noir = 17:1, blanc on bleu = 4.7:1,
- * bleu as text on noir only for large/bold type.
+ * Contrast (WCAG AA): encre/crème 15.7:1 · taupe/crème 5.4:1 · or/crème 5.2:1 · crème/encre 15.7:1.
+ * The animated gold gradient is reserved for large display words.
  */
 @theme {
-  --color-citron: #e8f800;
-  --color-bleu: #3366ff;
-  --color-noir: #000000;
-  --color-nuit: #0e0e0e;
-  --color-carbone: #181818;
-  --color-blanc: #ffffff;
-  --color-ivoire: #f4f4ef;
-  --color-lavande: #e4e8ff;
-  --color-menthe: #e2fae1;
-  --color-gris: #a3a3a3;
+  --color-creme: #f6f1e9;
+  --color-perle: #fbf8f3;
+  --color-sable: #ede4d6;
+  --color-champagne: #efe2c8;
+  --color-encre: #1c1814;
+  --color-taupe: #6b6054;
+  --color-ligne: #dccfbd;
+  --color-or: #806028;
+  --color-or-clair: #d9bf8c;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
   --font-sans: 'Apercu', var(--font-brand-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Apercu Mono', var(--font-brand-mono), ui-monospace, monospace;
 
-  --ease-brand: cubic-bezier(0.65, 0.05, 0, 1);
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --animate-marquee: marquee 40s linear infinite;
-  --animate-step-in: step-in 0.5s var(--ease-brand) both;
-  @keyframes step-in {
-    from { opacity: 0; transform: translateY(1rem); }
-    to { opacity: 1; transform: none; }
-  }
+  --animate-marquee: marquee 60s linear infinite;
   @keyframes marquee {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
+  }
+  --animate-step-in: step-in 0.7s var(--ease-brand) both;
+  @keyframes step-in {
+    from { opacity: 0; transform: translateY(0.75rem); }
+    to { opacity: 1; transform: none; }
+  }
+  --animate-sheen: sheen 6s ease-in-out infinite;
+  @keyframes sheen {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 }
 
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
-  body { @apply bg-noir text-ivoire font-sans antialiased; }
-  ::selection { @apply bg-citron text-noir; }
-  :focus-visible { @apply outline-2 outline-offset-2 outline-citron; }
+  body { @apply bg-creme text-encre font-sans font-light antialiased; }
+  ::selection { @apply bg-champagne text-encre; }
+  :focus-visible { @apply outline-1 outline-offset-4 outline-or; }
+  h1, h2, h3 { text-wrap: balance; }
 }
 
-/* Buttons: rounded, with a vertical text-roll on hover */
+/* ── Buttons: rectangular, small, widely tracked ─────────────────────────── */
 @utility btn {
-  @apply relative inline-flex min-h-12 items-center justify-center overflow-hidden rounded-lg px-6 text-sm font-bold uppercase tracking-wide transition-colors duration-500 ease-brand disabled:opacity-60;
+  @apply relative inline-flex min-h-12 items-center justify-center overflow-hidden px-8 text-[0.72rem] font-normal uppercase tracking-[0.22em] transition-colors duration-500 ease-brand disabled:opacity-50;
 }
-@utility btn-primary { @apply btn bg-citron text-noir hover:bg-ivoire; }
-@utility btn-ghost { @apply btn border border-ivoire/40 text-ivoire hover:border-citron hover:text-citron; }
-@utility btn-dark { @apply btn bg-noir text-citron hover:bg-carbone; }
+/* Primary: encre, with a champagne light sweeping across on hover */
+@utility btn-primary {
+  @apply btn bg-encre text-creme;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgb(233 211 160 / 0.45) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.9s var(--ease-brand);
+  }
+  &:hover::after { transform: translateX(120%); }
+}
+@utility btn-ghost { @apply btn border border-encre/80 text-encre hover:bg-encre hover:text-creme; }
+@utility btn-dark { @apply btn bg-encre text-creme hover:bg-taupe; }
+@utility btn-light { @apply btn bg-creme text-encre hover:bg-champagne; }
 
 @utility field {
-  @apply min-h-12 w-full rounded-lg border border-ivoire/25 bg-carbone px-4 text-base text-ivoire placeholder:text-gris focus:border-citron focus:outline-none;
+  @apply min-h-12 w-full border-0 border-b border-encre/30 bg-transparent px-0 text-base font-light text-encre placeholder:text-taupe/70 focus:border-or focus:outline-none;
 }
-@utility card { @apply rounded-3xl border border-ivoire/15 bg-nuit p-6; }
-@utility kicker { @apply font-mono text-xs uppercase tracking-[0.2em]; }
+@utility card { @apply border border-ligne bg-perle p-7; }
+@utility kicker { @apply font-mono text-[0.68rem] font-normal uppercase tracking-[0.28em]; }
 
-/* Display type: huge, tight, uppercase; .accent = Light italic in citron */
-@utility display {
-  @apply font-bold uppercase leading-[0.9] tracking-[-0.03em];
+/* Display type: large, light, airy */
+@utility display { @apply font-light uppercase leading-[1.02] tracking-[0.02em]; }
+/* Accent words: light italic with a slow champagne sheen */
+@utility accent {
+  @apply font-light italic normal-case;
+  background-image: linear-gradient(100deg, #806028 0%, #a88445 30%, #c9a96a 50%, #a88445 70%, #806028 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-sheen);
 }
-@utility accent { @apply font-light italic text-citron; }
-
-/* Curved section edges */
-@utility curve-top { border-top-left-radius: 50% 4rem; border-top-right-radius: 50% 4rem; }
-@utility curve-bottom { border-bottom-left-radius: 50% 4rem; border-bottom-right-radius: 50% 4rem; }
+/* Fine gold hairline */
+@utility hairline { @apply h-px w-full bg-gradient-to-r from-transparent via-or-clair to-transparent; }
 
 /* Scroll reveal (driven by <Reveal>, never hides content without JS) */
-[data-reveal='hidden'] { opacity: 0; transform: translateY(2.5rem); }
-[data-reveal='shown'] { opacity: 1; transform: none; transition: opacity 0.9s var(--ease-brand), transform 0.9s var(--ease-brand); }
+[data-reveal='hidden'] { opacity: 0; transform: translateY(1.5rem); }
+[data-reveal='shown'] { opacity: 1; transform: none; transition: opacity 1.2s var(--ease-brand), transform 1.2s var(--ease-brand); }
 
-.btn-mask { display: inline-block; overflow: hidden; height: 1.25em; line-height: 1.25em; }
-.btn-roll { display: inline-block; transition: transform 0.5s var(--ease-brand); text-shadow: 0 1.6em currentColor; }
-.btn:hover .btn-roll { transform: translateY(-1.6em); }
+/* Button label roll (kept, subtler) */
+.btn-mask { display: inline-block; overflow: hidden; height: 1.3em; line-height: 1.3em; }
+.btn-roll { display: inline-block; transition: transform 0.6s var(--ease-brand); text-shadow: 0 1.3em currentColor; }
+.btn:hover .btn-roll { transform: translateY(-1.3em); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }

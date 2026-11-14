@@ -28,26 +28,26 @@ export default async function ResultatPage() {
   ]
 
   return (
-    <div className="px-4 pt-28 pb-24">
+    <div className="px-4 pt-14 pb-24">
       <section className="mx-auto grid max-w-5xl justify-items-center gap-6 text-center">
-        <p className="kicker text-gris">Ton diagnostic</p>
+        <p className="kicker text-taupe">Ton diagnostic</p>
         <h1 className="display text-[22vw] sm:text-[11rem]">
           {t.code}
         </h1>
-        <p className="rounded-xl bg-citron px-4 py-3 font-mono text-sm font-bold text-noir sm:text-lg">{d.badge}</p>
-        <Wave name="curl" width={200} className="text-citron" />
+        <p className="bg-champagne px-4 py-3 font-mono text-sm font-normal text-encre sm:text-lg">{d.badge}</p>
+        <Wave name="curl" width={200} className="text-or" />
       </section>
 
       <section className="mx-auto mt-16 grid max-w-5xl gap-3 md:grid-cols-2">
         <dl className="card grid gap-4">
           {facts.map((f) => (
-            <div key={f.k} className="grid gap-1 border-b border-ivoire/10 pb-3 last:border-0 last:pb-0">
-              <dt className="kicker text-gris">{f.k}</dt>
-              <dd className="text-lg font-bold">{f.v}</dd>
+            <div key={f.k} className="grid gap-1 border-b border-encre/10 pb-3 last:border-0 last:pb-0">
+              <dt className="kicker text-taupe">{f.k}</dt>
+              <dd className="text-lg font-normal">{f.v}</dd>
             </div>
           ))}
         </dl>
-        <div className="grid content-between gap-6 rounded-3xl bg-bleu p-6 text-blanc">
+        <div className="grid content-between gap-6 bg-encre p-6 text-creme">
           <div className="grid gap-3">
             <p className="kicker">Jumelles capillaires</p>
             <p className="display text-5xl">
@@ -60,11 +60,11 @@ export default async function ResultatPage() {
             </p>
           </div>
           {userId ? (
-            <Link href="/jumelles" className="btn bg-blanc text-noir hover:bg-citron">
+            <Link href="/jumelles" className="btn bg-creme text-encre hover:bg-champagne">
               <ButtonLabel>Voir mes jumelles</ButtonLabel>
             </Link>
           ) : (
-            <Link href="/connexion?callbackUrl=%2Fcompte" className="btn bg-blanc text-noir hover:bg-citron">
+            <Link href="/connexion?callbackUrl=%2Fcompte" className="btn bg-creme text-encre hover:bg-champagne">
               <ButtonLabel>Sauvegarder mon profil</ButtonLabel>
             </Link>
           )}
@@ -78,14 +78,14 @@ export default async function ResultatPage() {
         <ul className="grid gap-3 md:grid-cols-3">
           {routineTips(d).map((tip) => (
             <li key={tip.title + tip.text.slice(0, 10)} className="card grid content-start gap-2">
-              <p className="font-bold uppercase">{tip.title}</p>
-              <p className="text-ivoire/75">{tip.text}</p>
+              <p className="font-normal uppercase">{tip.title}</p>
+              <p className="text-encre/75">{tip.text}</p>
             </li>
           ))}
         </ul>
-        <p className="text-sm text-gris">
+        <p className="text-sm text-taupe">
           Conseils généraux de soin, pas un avis médical.{' '}
-          <Link href="/diagnostic" className="underline underline-offset-4 hover:text-citron">
+          <Link href="/diagnostic" className="underline underline-offset-4 hover:text-or">
             Refaire le diagnostic
           </Link>
         </p>

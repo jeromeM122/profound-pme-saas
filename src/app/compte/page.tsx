@@ -38,17 +38,17 @@ export default async function ComptePage() {
   const hp = user.hairProfile
 
   return (
-    <div className="px-4 pt-28 pb-24">
+    <div className="px-4 pt-14 pb-24">
       <section className="mx-auto grid max-w-5xl gap-3">
-        <p className="kicker text-gris">{ROLE_LABEL[user.role]}</p>
+        <p className="kicker text-taupe">{ROLE_LABEL[user.role]}</p>
         <h1 className="display text-5xl sm:text-7xl">
           Mon <span className="accent">compte</span>
         </h1>
-        <p className="text-gris">
+        <p className="text-taupe">
           {user.email} · {user._count.followers} abonné·es · {user._count.following} abonnements
         </p>
         {user.handle && (
-          <Link href={`/@${user.handle}` as '/'} className="w-fit font-mono text-citron underline underline-offset-4">
+          <Link href={`/@${user.handle}` as '/'} className="w-fit font-mono text-or underline underline-offset-4">
             tresser.fr/@{user.handle}
           </Link>
         )}
@@ -56,7 +56,7 @@ export default async function ComptePage() {
 
       <div className="mx-auto mt-12 grid max-w-5xl gap-3 lg:grid-cols-[1.2fr_1fr]">
         <section className="card grid content-start gap-6" aria-labelledby="profil-title">
-          <h2 id="profil-title" className="text-xl font-bold uppercase">
+          <h2 id="profil-title" className="text-xl font-normal uppercase">
             Profil public
           </h2>
           <ProfileForm
@@ -66,13 +66,13 @@ export default async function ComptePage() {
         </section>
 
         <div className="grid content-start gap-3">
-          <section className="grid gap-4 rounded-3xl bg-citron p-6 text-noir" aria-labelledby="diag-title">
-            <h2 id="diag-title" className="text-xl font-bold uppercase">
+          <section className="grid gap-4 bg-champagne p-6 text-encre" aria-labelledby="diag-title">
+            <h2 id="diag-title" className="text-xl font-normal uppercase">
               Mon diagnostic
             </h2>
             {hp ? (
               <>
-                <div className="rounded-lg bg-noir p-1 w-fit">
+                <div className="bg-encre p-1 w-fit">
                   <HairBadge texture={hp.texture} porosity={hp.porosity} goals={hp.goals} />
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -82,7 +82,7 @@ export default async function ComptePage() {
                   <Link href="/jumelles" className="btn-dark">
                     <ButtonLabel>Mes jumelles</ButtonLabel>
                   </Link>
-                  <Link href="/diagnostic" className="btn border border-noir/40 hover:bg-noir hover:text-citron">
+                  <Link href="/diagnostic" className="btn border border-encre/40 hover:bg-encre hover:text-or">
                     <ButtonLabel>Refaire</ButtonLabel>
                   </Link>
                 </div>
@@ -101,7 +101,7 @@ export default async function ComptePage() {
           </section>
 
           <section className="card grid gap-4" aria-labelledby="social-title">
-            <h2 id="social-title" className="text-xl font-bold uppercase">
+            <h2 id="social-title" className="text-xl font-normal uppercase">
               Réseaux sociaux
             </h2>
             <SocialLinksForm links={links} />

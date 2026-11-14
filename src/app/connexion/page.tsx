@@ -28,16 +28,16 @@ export default async function ConnexionPage({ searchParams }: Props) {
   const providers = enabledProviders()
 
   return (
-    <section className="mx-auto grid max-w-md gap-6 px-4 pt-32 pb-16">
+    <section className="mx-auto grid max-w-md gap-6 px-4 pt-16 pb-16">
       <div className="grid justify-items-center gap-3 text-center">
         <p className="kicker">Bienvenue</p>
         <h1 className="display text-4xl sm:text-5xl">Rejoins la communauté</h1>
-        <Wave name="curl" width={160} className="text-citron" />
-        <p className="text-gris">Un clic, pas de mot de passe.</p>
+        <Wave name="curl" width={160} className="text-or" />
+        <p className="text-taupe">Un clic, pas de mot de passe.</p>
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-citron px-4 py-3 text-sm font-bold text-noir">
+        <p role="alert" className="bg-champagne px-4 py-3 text-sm font-normal text-encre">
           {error}
         </p>
       )}
@@ -62,8 +62,8 @@ export default async function ConnexionPage({ searchParams }: Props) {
         {providers.email && (
           <>
             {(providers.google || providers.apple) && (
-              <div className="flex items-center gap-3 text-xs text-gris" aria-hidden>
-                <span className="h-px flex-1 bg-ivoire/20" /> ou <span className="h-px flex-1 bg-ivoire/20" />
+              <div className="flex items-center gap-3 text-xs text-taupe" aria-hidden>
+                <span className="h-px flex-1 bg-encre/10" /> ou <span className="h-px flex-1 bg-encre/10" />
               </div>
             )}
             <form action={requestMagicLink} className="grid gap-3">
@@ -88,11 +88,11 @@ export default async function ConnexionPage({ searchParams }: Props) {
         )}
 
         {!providers.email && !providers.google && !providers.apple && (
-          <p className="text-sm text-gris">Aucune méthode de connexion n’est configurée.</p>
+          <p className="text-sm text-taupe">Aucune méthode de connexion n’est configurée.</p>
         )}
       </div>
 
-      <p className="text-center text-xs text-gris">
+      <p className="text-center text-xs text-taupe">
         En continuant, tu acceptes nos conditions d’utilisation et notre politique de confidentialité.
       </p>
     </section>

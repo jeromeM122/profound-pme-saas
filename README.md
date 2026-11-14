@@ -21,10 +21,10 @@ Scripts : `lint`, `typecheck`, `test`, `build`.
 Appliquée d'après la *charte graphique de tresser.fr* :
 
 - **Logo** : tracés vectoriels officiels extraits de la charte (`src/components/brand/logo-paths.ts`). Le composant `<Logo>` n'accepte que `noir` ou `blanc`, proportions verrouillées (cf. « Les interdits »). Fichiers : `public/brand/tresser-logo-{noir,blanc}.svg`.
-- **Couleurs** : jaune citron `#E8F800`, bleu `#3366FF`, noir `#000000` + teintes d'applat lavande `#E4E8FF` et menthe `#E2FAE1`. Le citron n'est jamais utilisé comme couleur de texte sur blanc (contraste).
+- **Couleurs (thème Maison)** : crème `#F6F1E9`, perle `#FBF8F3`, sable `#EDE4D6`, encre `#1C1814`, taupe `#6B6054`, or `#806028` / or clair `#D9BF8C`.
 - **Typographie** : Apercu / Apercu Mono. Police commerciale (licence web requise) : en attendant, substituts libres auto-hébergés DM Sans / DM Mono. Pour basculer, déposer les `.woff2` Apercu et modifier `src/app/fonts.ts`.
 - **Éléments graphiques** : boucle et vagues extraites de la charte (`<Wave name="curl|tight|wave|swell">`).
-- **Univers** : thème sombre « night drive » (fond noir, accent citron, panneaux citron/bleu), titres géants en capitales qui mêlent Bold et Light italique citron, cartes arrondies à onglet, transitions courbes, bandeau défilant, révélations au scroll (respecte `prefers-reduced-motion`), accroches de la charte.
+- **Univers « Maison »** : direction beauté de luxe — fond crème, encre brun-noir, touches or champagne (filets, reflet animé sur les mots-clés), typographie fine et aérée, boutons rectangulaires, grands espaces. Contrastes vérifiés WCAG AA.
 
 ## Sécurité (socle)
 
