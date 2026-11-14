@@ -100,9 +100,9 @@
 [data-reveal='shown'] { opacity: 1; transform: none; transition: opacity 1.2s var(--ease-brand), transform 1.2s var(--ease-brand); }
 
 /* Button label roll (kept, subtler) */
-.btn-mask { display: inline-block; overflow: hidden; height: 1.3em; line-height: 1.3em; }
-.btn-roll { display: inline-block; transition: transform 0.6s var(--ease-brand); text-shadow: 0 1.3em currentColor; }
-.btn:hover .btn-roll { transform: translateY(-1.3em); }
+.btn-mask { display: inline-block; overflow: hidden; height: 1.5em; line-height: 1.5em; }
+.btn-roll { display: inline-block; transition: transform 0.6s var(--ease-brand); text-shadow: 0 2.2em currentColor; }
+.btn:hover .btn-roll { transform: translateY(-2.2em); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }

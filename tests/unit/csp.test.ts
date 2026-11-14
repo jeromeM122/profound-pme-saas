@@ -8,7 +8,9 @@ describe('CSP', () => {
 
   it('uses nonce + strict-dynamic and never unsafe-inline/eval in prod', () => {
     expect(directive(prod, 'script-src')).toBe("script-src 'self' 'nonce-abc' 'strict-dynamic'")
-    expect(prod).not.toContain('unsafe-inline')
+    expect(directive(prod, 'style-src')).toBe("style-src 'self' 'nonce-abc'")
+    expect(directive(prod, 'style-src-attr')).toBe("style-src-attr 'unsafe-inline'")
+    expect(directive(prod, 'script-src')).not.toContain('unsafe-inline')
     expect(prod).not.toContain('unsafe-eval')
   })
 

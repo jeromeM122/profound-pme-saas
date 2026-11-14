@@ -1,8 +1,16 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { Wave } from '@/components/brand/Wave'
 import type { WaveName } from '@/components/brand/wave-paths'
 import { Reveal } from '@/components/motion/Reveal'
 import { ButtonLabel } from '@/components/ui/ButtonLabel'
+import cindyImg from '@/assets/photos/cindy.webp'
+import gabouImg from '@/assets/photos/gabou.webp'
+import joannaImg from '@/assets/photos/joanna.webp'
+import laurenBannerImg from '@/assets/photos/lauren-banniere.webp'
+import laurenRoutineImg from '@/assets/photos/lauren-routine.webp'
+import lindsayImg from '@/assets/photos/lindsay.webp'
+import tresserImg from '@/assets/photos/tresser.webp'
 
 const TEXTURES: { code: string; label: string; wave: WaveName }[] = [
   { code: '1A', label: 'Raides fins', wave: 'swell' },
@@ -18,6 +26,14 @@ const TEXTURES: { code: string; label: string; wave: WaveName }[] = [
   { code: '4B', label: 'Crépus en Z', wave: 'curl' },
   { code: '4C', label: 'Crépus très serrés', wave: 'curl' },
 ]
+
+/** Community routines published on tresser.fr (photos reused from the brand's own articles). */
+const ROUTINES = [
+  { name: 'Cindy', title: 'Ses essentiels pour cheveux crépus', img: cindyImg, alt: 'Cindy, cheveux crépus relevés en chignon, lunettes de soleil', href: 'https://tresser.fr/blogs/routines-capillaires/cindy' },
+  { name: 'Joanna', title: 'Une routine multitexture', img: joannaImg, alt: 'Joanna, cheveux bouclés volumineux, assise en terrasse', href: 'https://tresser.fr/blogs/routines-capillaires/routine-capillaire-multitexture-joanna' },
+  { name: 'Lindsay', title: 'Routine minimaliste pour locks', img: lindsayImg, alt: 'Locks de Lindsay vues de dos', href: 'https://tresser.fr/blogs/routines-capillaires/soin-locks-lindsay' },
+  { name: 'Gabou', title: 'Cheveux frisés et bouclés', img: gabouImg, alt: 'Gabou, cheveux frisés courts, lunettes teintées', href: 'https://tresser.fr/blogs/routines-capillaires/cheveux-boucles-frises-gabou' },
+] as const
 
 const RITUAL = [
   { n: 'I', title: 'Le diagnostic', text: 'Texture, porosité, cuir chevelu, objectifs : six questions pour révéler ton profil capillaire.' },
@@ -50,17 +66,19 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Champagne halo — product-spotlight composition (no photography yet) */}
-        <div aria-hidden className="relative mx-auto aspect-[4/5] w-full max-w-md">
-          <div className="absolute inset-0 bg-sable" />
-          <div className="absolute top-[12%] left-1/2 aspect-square w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_35%_30%,#fbf8f3_0%,#efe2c8_45%,#d9bf8c_100%)] opacity-90" />
-          <div className="absolute top-[12%] left-1/2 aspect-square w-[72%] -translate-x-1/2 rounded-full border border-or-clair/70" />
-          <div className="absolute top-[17%] left-1/2 aspect-square w-[62%] -translate-x-1/2 rounded-full border border-or-clair/40" />
-          <div className="absolute inset-x-0 bottom-[9%] grid justify-items-center gap-3">
-            <Wave name="curl" width={180} className="text-or" />
-            <p className="kicker text-[0.6rem] text-taupe">De 1A à 4C</p>
-          </div>
-        </div>
+        {/* Framed editorial portrait with an offset gold hairline */}
+        <figure className="relative mx-auto w-full max-w-md pr-4 pb-4">
+          <div aria-hidden className="absolute inset-0 top-4 left-4 border border-or-clair" />
+          <Image
+            src={tresserImg}
+            alt="Trois portraits de femmes aux cheveux crépus naturels, en lumière chaude"
+            priority
+            placeholder="blur"
+            sizes="(min-width: 768px) 28rem, 90vw"
+            className="relative aspect-[4/5] w-full object-cover"
+          />
+          <figcaption className="kicker absolute -bottom-6 left-4 text-[0.6rem] text-taupe">De 1A à 4C · toutes les textures</figcaption>
+        </figure>
       </section>
 
       {/* MANIFESTE */}
@@ -72,6 +90,29 @@ export default function Home() {
           </p>
           <p className="kicker text-taupe">Chaque tresse est une archive vivante</p>
         </Reveal>
+      </section>
+
+      {/* EDITORIAL BANNER */}
+      <section className="relative bg-perle">
+        <Image
+          src={laurenBannerImg}
+          alt="Lauren passe la main dans ses cheveux crépus, de profil, sur fond clair"
+          placeholder="blur"
+          sizes="100vw"
+          className="h-[60vh] max-h-[640px] min-h-[360px] w-full object-cover object-[30%_center]"
+        />
+        <div className="mx-auto max-w-7xl px-4 sm:px-8 md:absolute md:inset-0 md:flex md:items-center md:justify-end">
+          <Reveal className="grid gap-6 bg-perle/90 py-10 md:max-w-sm md:p-10 md:backdrop-blur-sm">
+            <p className="kicker text-or">La routine de Lauren</p>
+            <p className="display text-3xl sm:text-4xl">
+              Prendre soin, <span className="accent">en conscience</span>
+            </p>
+            <p className="leading-relaxed text-taupe">Des gestes simples, choisis pour sa texture : c’est ce que le diagnostic t’aide à construire.</p>
+            <Link href="/diagnostic" className="btn-ghost w-fit">
+              <ButtonLabel>Créer ma routine</ButtonLabel>
+            </Link>
+          </Reveal>
+        </div>
       </section>
 
       {/* LE RITUEL — three steps */}
@@ -96,6 +137,43 @@ export default function Home() {
             <ButtonLabel>Commencer le diagnostic</ButtonLabel>
           </Link>
         </div>
+      </section>
+
+      {/* COMMUNITY ROUTINES */}
+      <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
+        <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
+          <div className="grid gap-4">
+            <p className="kicker text-or">Elles et ils racontent</p>
+            <h2 className="display text-4xl sm:text-5xl">
+              Les routines <span className="accent">de la communauté</span>
+            </h2>
+          </div>
+          <a href="https://tresser.fr/blogs/routines-capillaires" target="_blank" rel="noopener noreferrer" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
+            Toutes les routines
+          </a>
+        </Reveal>
+        <ul className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
+          {ROUTINES.map((r) => (
+            <li key={r.name}>
+              <a href={r.href} target="_blank" rel="noopener noreferrer" className="group grid gap-4">
+                <div className="overflow-hidden bg-sable">
+                  <Image
+                    src={r.img}
+                    alt={r.alt}
+                    placeholder="blur"
+                    sizes="(min-width: 1024px) 22vw, 45vw"
+                    className="aspect-[3/4] w-full object-cover transition-transform duration-[1.4s] ease-brand group-hover:scale-[1.04]"
+                  />
+                </div>
+                <div className="grid gap-1">
+                  <p className="kicker text-[0.62rem] text-or">{r.name}</p>
+                  <p className="text-lg leading-snug">{r.title}</p>
+                  <p className="kicker mt-1 text-[0.6rem] text-taupe transition-colors group-hover:text-encre">Lire sa routine →</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* TEXTURES */}
@@ -138,8 +216,9 @@ export default function Home() {
           </p>
         </Reveal>
         <Reveal className="mx-auto">
-          <div aria-hidden className="grid aspect-[9/16] w-52 place-items-center rounded-[2rem] border border-ligne bg-perle shadow-[0_30px_60px_-30px_rgb(28_24_20/0.35)]">
-            <span className="grid size-16 place-items-center rounded-full border border-or-clair bg-creme">
+          <div aria-hidden className="relative grid aspect-[9/16] w-56 place-items-center overflow-hidden rounded-[2rem] border-[6px] border-perle bg-sable shadow-[0_30px_60px_-30px_rgb(28_24_20/0.45)]">
+            <Image src={laurenRoutineImg} alt="" placeholder="blur" sizes="14rem" className="absolute inset-0 h-full w-full object-cover object-[35%_center]" />
+            <span className="relative grid size-16 place-items-center rounded-full border border-or-clair bg-creme/90 backdrop-blur">
               <span className="ml-1 size-0 border-y-[8px] border-l-[13px] border-y-transparent border-l-or" />
             </span>
           </div>

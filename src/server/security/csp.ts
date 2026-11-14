@@ -14,6 +14,9 @@ export function buildCsp(nonce: string, opts: { dev: boolean }): string {
     'default-src': ["'self'"],
     'script-src': ["'self'", `'nonce-${nonce}'`, "'strict-dynamic'", ...(opts.dev ? ["'unsafe-eval'"] : [])],
     'style-src': ["'self'", `'nonce-${nonce}'`],
+    // Inline style *attributes* only (next/image sizing + blur placeholder). <style> elements stay nonce-locked,
+    // and scripts remain nonce + strict-dynamic, so this does not open a script-injection path.
+    'style-src-attr': ["'unsafe-inline'"],
     'img-src': ["'self'", 'blob:', 'data:'],
     'font-src': ["'self'"],
     'connect-src': ["'self'", ...(opts.dev ? ['ws:'] : [])],
