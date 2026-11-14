@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   typedRoutes: true,
+  // Progress photos are downscaled in the browser (< 4 MB) before reaching the server action.
+  experimental: { serverActions: { bodySizeLimit: '4.5mb' } },
   /** Public profiles live at /@handle (served by /membre/[handle]). */
   async rewrites() {
     return [{ source: '/@:handle', destination: '/membre/:handle' }]

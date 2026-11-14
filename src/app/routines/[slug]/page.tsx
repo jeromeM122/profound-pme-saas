@@ -11,6 +11,8 @@ import { ButtonLabel } from '@/components/ui/ButtonLabel'
 import { productForStep } from '@/content/catalog'
 import { CATEGORY_LABEL, CATEGORY_SLUG, getRoutine, matchRoutine, rankRoutines, ROUTINES } from '@/content/routines'
 import { getVisitorProfile } from '@/server/hair/visitor-profile'
+import { loadVideos, VideoGrid } from '@/components/video/VideoRail'
+import { db } from '@/server/db'
 
 type Props = { params: Promise<{ slug: string }> }
 const SHARE_FORM = 'https://tally.so/r/mY7zoq'
@@ -38,6 +40,8 @@ export default async function RoutinePage({ params }: Props) {
     profile,
     ROUTINES.filter((x) => x.slug !== r.slug && (profile ? true : x.categories.some((c) => r.categories.includes(c)))),
   ).slice(0, 4)
+  const productIds = (await db.product.findMany({ where: { slug: { in: items.flatMap((i) => (i.product ? [i.product.slug] : [])) } }, select: { id: true } })).map((p) => p.id)
+  const videos = productIds.length ? await loadVideos({ productIds, limit: 8 }) : []
   const heroDesktop = r.hero ?? r.heroMobile
   const heroMobile = r.heroMobile ?? r.hero
 
@@ -204,6 +208,15 @@ export default async function RoutinePage({ params }: Props) {
           </p>
         </article>
       </div>
+
+      {videos.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-8">
+          <h2 className="display mb-8 text-3xl sm:text-4xl">
+            Ces produits <span className="accent">en vidéo</span>
+          </h2>
+          <VideoGrid videos={videos} />
+        </section>
+      )}
 
       {/* RELATED */}
       {related.length > 0 && (

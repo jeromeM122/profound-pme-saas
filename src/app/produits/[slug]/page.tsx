@@ -11,8 +11,12 @@ import { auth } from '@/server/auth'
 import { db } from '@/server/db'
 import { getVisitorProfile } from '@/server/hair/visitor-profile'
 import { setBathroomStatus } from '../actions'
+import { loadVideos, VideoGrid } from '@/components/video/VideoRail'
+import { VideoSubmit } from '@/components/video/VideoSubmit'
+import { TEXTURES } from '@/lib/hair/options'
+import type { HairTexture } from '@/generated/prisma/enums'
 
-type Props = { params: Promise<{ slug: string }> }
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = getProduct((await params).slug)
@@ -24,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProduitPage({ params }: Props) {
+export default async function ProduitPage({ params, searchParams }: Props) {
   const p = getProduct((await params).slug)
   if (!p) notFound()
   const from = `/produits/${p.slug}`
@@ -38,6 +42,12 @@ export default async function ProduitPage({ params }: Props) {
       bathroom: session?.user?.id ? { where: { userId: session.user.id }, select: { status: true } } : false,
     },
   })
+  const sp = await searchParams
+  const vt = typeof sp.texture === 'string' ? (Object.keys(TEXTURES).find((k) => TEXTURES[k as HairTexture].code.toLowerCase() === sp.texture) as HairTexture | undefined) : undefined
+  const videos = dbProduct ? await loadVideos({ productIds: [dbProduct.id], textures: vt ? [vt] : undefined, viewerId: session?.user?.id }) : []
+  const videoTextures = dbProduct
+    ? (await db.socialVideo.findMany({ where: { productId: dbProduct.id, moderation: 'APPROVED', texture: { not: null } }, select: { texture: true }, distinct: ['texture'] })).map((v) => v.texture!)
+    : []
   const mine = dbProduct && 'bathroom' in dbProduct && Array.isArray(dbProduct.bathroom) ? dbProduct.bathroom[0]?.status : undefined
   const members = dbProduct?._count.bathroom ?? 0
   const related = PRODUCTS.filter((x) => x.slug !== p.slug && x.categories.some((c) => p.categories.includes(c)))
@@ -122,6 +132,38 @@ export default async function ProduitPage({ params }: Props) {
               </Link>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* Videos */}
+      <section id="videos" aria-labelledby="videos-title" className="scroll-mt-28 mx-auto max-w-7xl px-4 py-20 sm:px-8">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <h2 id="videos-title" className="display text-3xl sm:text-4xl">
+            Vu <span className="accent">en vidéo</span>
+          </h2>
+          {videoTextures.length > 0 && (
+            <nav aria-label="Filtrer les vidéos par texture" className="flex flex-wrap gap-2">
+              <Link href={`/produits/${p.slug}#videos` as '/produits'} className={`kicker border px-3 py-2 text-[0.55rem] ${!vt ? 'border-encre bg-encre text-creme' : 'border-ligne hover:border-or'}`}>Toutes</Link>
+              {videoTextures.map((t) => (
+                <Link key={t} href={`/produits/${p.slug}?texture=${TEXTURES[t].code.toLowerCase()}#videos` as '/produits'} className={`kicker border px-3 py-2 text-[0.55rem] ${vt === t ? 'border-encre bg-encre text-creme' : 'border-ligne hover:border-or'}`}>
+                  Sur cheveux {TEXTURES[t].code}
+                </Link>
+              ))}
+            </nav>
+          )}
+        </div>
+        {videos.length > 0 ? <VideoGrid videos={videos} /> : <p className="text-taupe">Pas encore de vidéo{vt ? ' pour cette texture' : ''}. Montre-le en action sur tes cheveux !</p>}
+        <div className="mt-10 border-t border-ligne pt-8">
+          {session?.user ? (
+            <details className="group">
+              <summary className="btn-ghost w-fit cursor-pointer list-none">Ajouter ma vidéo</summary>
+              <div className="mt-6 max-w-2xl"><VideoSubmit productSlug={p.slug} path={from} defaultTexture={profile?.texture} /></div>
+            </details>
+          ) : (
+            <Link href={`/connexion?callbackUrl=${encodeURIComponent(from)}` as '/connexion'} className="kicker border-b border-encre/40 pb-1 text-[0.6rem] hover:border-or hover:text-or">
+              Connecte-toi pour partager ta vidéo
+            </Link>
+          )}
         </div>
       </section>
 

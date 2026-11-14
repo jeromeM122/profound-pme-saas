@@ -5,6 +5,7 @@ const STEPS = [
   { label: 'Ma routine', href: '/ma-routine' },
   { label: 'Mes produits', href: '/ma-routine#a-acheter' },
   { label: 'Mon rituel', href: '/ma-routine#rituel' },
+  { label: 'Mon suivi', href: '/ma-routine/suivi' },
 ] as const
 
 /** The member journey, always visible on the key pages: diagnostic → routine → products → ritual. */

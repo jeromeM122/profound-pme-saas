@@ -16,6 +16,7 @@ import { auth } from '@/server/auth'
 import { db } from '@/server/db'
 import { getVisitorProfile } from '@/server/hair/visitor-profile'
 import { chooseProduct, toggleOwned } from './actions'
+import { loadVideos, VideoGrid } from '@/components/video/VideoRail'
 
 export const metadata: Metadata = { title: 'Ma routine sur-mesure', robots: { index: false } }
 
@@ -47,6 +48,9 @@ export default async function MaRoutinePage() {
   const { plan, summary } = weeklyRitual(profile)
   const inspiration = rankRoutines(profile).slice(0, 4)
   const texture = TEXTURES[profile.texture]
+  const pickedIds = (await db.product.findMany({ where: { slug: { in: regimen.flatMap((s) => (s.pick ? [s.pick.product.slug] : [])) } }, select: { id: true } })).map((p) => p.id)
+  const sameTexture = pickedIds.length ? await loadVideos({ productIds: pickedIds, textures: [profile.texture], viewerId: userId, limit: 8 }) : []
+  const videos = sameTexture.length ? sameTexture : pickedIds.length ? await loadVideos({ productIds: pickedIds, viewerId: userId, limit: 8 }) : []
 
   return (
     <div className="pb-28 lg:pb-0">
@@ -279,6 +283,30 @@ export default async function MaRoutinePage() {
           </div>
         )}
       </section>
+
+      {/* PROGRESS */}
+      <section className="border-y border-ligne px-4 py-16 sm:px-8">
+        <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="grid gap-2">
+            <p className="kicker text-or">Mon suivi</p>
+            <p className="display text-3xl">Vois ta routine <span className="accent">faire effet</span></p>
+            <p className="text-taupe">Une photo à chaque wash day, une comparaison avant / après. Tes photos restent privées.</p>
+          </div>
+          <Link href={userId ? '/ma-routine/suivi' : ('/connexion?callbackUrl=%2Fma-routine%2Fsuivi' as '/connexion')} className="btn-primary">
+            <ButtonLabel>{userId ? 'Ouvrir mon suivi' : 'Commencer mon suivi'}</ButtonLabel>
+          </Link>
+        </div>
+      </section>
+
+      {videos.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-8">
+          <h2 className="display mb-8 text-3xl sm:text-4xl">
+            Tes produits <span className="accent">en vidéo</span>
+            {sameTexture.length > 0 && <span className="kicker ml-3 align-middle text-[0.6rem] text-taupe">sur cheveux {texture.code}</span>}
+          </h2>
+          <VideoGrid videos={videos} />
+        </section>
+      )}
 
       {/* INSPIRATION */}
       <section className="bg-perle px-4 py-20 sm:px-8">

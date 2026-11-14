@@ -55,6 +55,7 @@ export function pickPolicy(pathname: string, method: string): Policy | null {
     return pathname.startsWith('/api/auth/signin/nodemailer') ? 'authEmail' : 'authGeneric'
   }
   if (pathname.startsWith('/api/quiz')) return 'quiz'
+  if (pathname.startsWith('/api/media/')) return 'media'
   if (pathname.startsWith('/api/')) return 'apiDefault'
   return null
 }

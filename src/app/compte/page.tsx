@@ -79,6 +79,9 @@ export default async function ComptePage() {
                   <Link href="/diagnostic/resultat" className="btn-dark">
                     <ButtonLabel>Voir</ButtonLabel>
                   </Link>
+                  <Link href="/ma-routine/suivi" className="btn-dark">
+                    <ButtonLabel>Mon suivi</ButtonLabel>
+                  </Link>
                   <Link href="/jumelles" className="btn-dark">
                     <ButtonLabel>Mes jumelles</ButtonLabel>
                   </Link>

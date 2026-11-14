@@ -50,7 +50,10 @@ export default async function AdminPage() {
 
   return (
     <section className="mx-auto grid max-w-6xl gap-8 px-4 pt-14 pb-24 sm:px-6">
-      <h1 className="display text-4xl sm:text-5xl">Administration</h1>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="display text-4xl sm:text-5xl">Administration</h1>
+        <a href="/admin/videos" className="btn-ghost">Modérer les vidéos ({pendingVideos})</a>
+      </div>
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="card">

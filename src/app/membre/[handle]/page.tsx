@@ -8,6 +8,7 @@ import { HairBadge } from '@/components/profile/HairBadge'
 import { canonicalSocialUrl, SOCIAL_LABEL } from '@/lib/social/parse'
 import { auth } from '@/server/auth'
 import { getPublicProfile, isFollowing } from '@/server/social/graph'
+import { loadVideos, VideoGrid } from '@/components/video/VideoRail'
 
 type Props = { params: Promise<{ handle: string }> }
 
@@ -47,6 +48,7 @@ export default async function MemberPage({ params }: Props) {
   const following = viewerId && !isOwner ? await isFollowing(viewerId, p.id) : false
   const path = `/@${p.handle}`
   const hp = p.hairProfile
+  const videos = await loadVideos({ submitterId: p.id, viewerId: isOwner ? viewerId : null, limit: 8 })
 
   return (
     <div className="px-4 pt-14 pb-24">
@@ -100,6 +102,15 @@ export default async function MemberPage({ params }: Props) {
           )}
         </div>
       </section>
+
+      {videos.length > 0 && (
+        <section className="mx-auto mt-20 grid max-w-5xl gap-6">
+          <h2 className="display text-4xl sm:text-5xl">
+            Mes <span className="accent">vidéos</span>
+          </h2>
+          <VideoGrid videos={videos} />
+        </section>
+      )}
 
       <section className="mx-auto mt-20 grid max-w-5xl gap-6">
         <div className="flex items-center gap-4">

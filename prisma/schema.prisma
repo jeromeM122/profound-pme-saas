@@ -72,6 +72,14 @@ enum SocialPlatform {
   YOUTUBE
 }
 
+/// Where a community video comes from
+enum VideoSource {
+  TIKTOK
+  INSTAGRAM
+  YOUTUBE
+  UPLOAD
+}
+
 enum Moderation {
   PENDING
   APPROVED
@@ -149,6 +157,7 @@ model User {
   conversions    Conversion[]
   orders         Order[]
   routineChoices RoutineChoice[]
+  progress       ProgressEntry[]
 }
 
 /// OAuth tokens are intentionally NOT persisted (identity only — least privilege).
@@ -404,20 +413,22 @@ model Conversion {
 // ─── Social videos ──────────────────────────────────────────────────────────
 
 model SocialVideo {
-  id           String         @id @default(cuid())
-  platform     SocialPlatform
-  /// Extracted by strict regex; the submitted URL is never stored
-  externalId   String         @db.VarChar(64)
-  authorHandle String?        @db.VarChar(64)
-  /// Copy on our CDN
+  id           String       @id @default(cuid())
+  platform     VideoSource
+  /// Platform video id (links) or private storage key (uploads); the submitted URL is never stored
+  externalId   String       @db.VarChar(160)
+  authorHandle String?      @db.VarChar(64)
   thumbnailUrl String?
-  title        String?        @db.VarChar(200)
+  title        String?      @db.VarChar(200)
+  /// Uploads only
+  contentType  String?      @db.VarChar(40)
+  sizeBytes    Int?
   texture      HairTexture?
   porosity     Porosity?
   productId    String?
   submitterId  String
-  moderation   Moderation     @default(PENDING)
-  createdAt    DateTime       @default(now())
+  moderation   Moderation   @default(PENDING)
+  createdAt    DateTime     @default(now())
 
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   submitter User     @relation("submitter", fields: [submitterId], references: [id], onDelete: Cascade)
@@ -425,6 +436,28 @@ model SocialVideo {
   @@unique([platform, externalId, productId])
   @@index([productId, moderation, texture])
   @@index([submitterId])
+  @@index([moderation, createdAt])
+}
+
+/// Private progress journal entry (photo + how the hair feels)
+model ProgressEntry {
+  id         String   @id @default(cuid())
+  userId     String
+  takenAt    DateTime @db.Date
+  /// Private storage key — served only to the owner through /api/media
+  photoKey   String   @unique @db.VarChar(160)
+  width      Int
+  height     Int
+  note       String?  @db.VarChar(500)
+  /// 1..5 (CHECK constraints in migration)
+  hydration  Int?
+  definition Int?
+  breakage   Int?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, takenAt])
 }
 
 // ─── Direct sales ───────────────────────────────────────────────────────────

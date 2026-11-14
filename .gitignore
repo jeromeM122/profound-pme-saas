@@ -19,3 +19,6 @@ src/generated/
 .DS_Store
 npm-debug.log*
 .vercel
+
+# local media uploads (dev)
+.data/

@@ -14,6 +14,8 @@ export const POLICIES = {
   quiz: { tokens: 20, window: '1 m' },
   profileWrite: { tokens: 20, window: '1 m' },
   affiliateRedirect: { tokens: 60, window: '1 m' }, // /go/*
+  media: { tokens: 600, window: '1 m' }, // /api/media/* (video range requests)
+  upload: { tokens: 20, window: '1 h' }, // photo / video uploads per user
   apiDefault: { tokens: 120, window: '1 m' },
 } as const satisfies Record<string, { tokens: number; window: Window }>
 

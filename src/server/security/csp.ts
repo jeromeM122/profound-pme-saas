@@ -19,7 +19,8 @@ export function buildCsp(nonce: string, opts: { dev: boolean }): string {
     'style-src-attr': ["'unsafe-inline'"],
     'img-src': ["'self'", 'blob:', 'data:'],
     'font-src': ["'self'"],
-    'connect-src': ["'self'", ...(opts.dev ? ['ws:'] : [])],
+    // Direct-to-storage video uploads (Vercel Blob client upload API)
+    'connect-src': ["'self'", 'https://vercel.com', ...(opts.dev ? ['ws:'] : [])],
     'media-src': ["'self'"],
     'frame-src': [...VIDEO_FRAME_ORIGINS],
     'object-src': ["'none'"],

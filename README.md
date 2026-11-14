@@ -50,7 +50,8 @@ Pourquoi `SameSite=Lax` et pas `Strict` : une visiteuse arrivant depuis un lien 
 2. **Ma routine** (`/ma-routine`) — étapes adaptées (texture, porosité, objectifs), produit recommandé par étape (adéquation + preuve communautaire + disponibilité), 3 alternatives, « Je l'ai déjà ».
 3. **Mes produits** — liste d'achats des produits manquants, regroupée par boutique, clics suivis via `/go`.
 4. **Mon rituel** — semaine type (wash day, rafraîchissement, protection de nuit).
-5. **Ma communauté** — routines de profils proches, jumelles capillaires, salle de bain publique.
+5. **Mon suivi** (`/ma-routine/suivi`) — photos privées (métadonnées/GPS supprimés), comparaison avant/après, évolution hydratation / définition / casse.
+6. **Ma communauté** — routines de profils proches, jumelles capillaires, salle de bain publique.
 
 ## Feuille de route
 
@@ -59,4 +60,4 @@ Pourquoi `SameSite=Lax` et pas `Strict` : une visiteuse arrivant depuis un lien 
 3. ✅ Routines de la communauté (`/routines`, `/routines/[slug]`) — 20 routines reprises de tresser.fr, personnalisées selon le diagnostic
 4. ✅ Catalogue (`/produits`, `/produits/[slug]`), clics suivis via `/go/[offerId]`, « Ma salle de bain », statistiques admin — panier & paiement Stripe à venir
 5. Catalogue hybride (vente directe + Stripe) e-commerce / affiliation (`/go/[offerId]`, Stripe)
-6. Vidéos sociales (façades, modération, filtres par texture)
+6. ✅ Vidéos (lien TikTok / Reel Instagram / Short YouTube ou envoi de fichier), lecture au clic, modération `/admin/videos` (façades, modération, filtres par texture)
