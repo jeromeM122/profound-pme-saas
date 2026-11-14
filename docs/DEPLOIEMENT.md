@@ -48,6 +48,9 @@ Ouvre le lien du déploiement dans une fenêtre privée : Vercel doit te demande
   `UPDATE "User" SET role = 'ADMIN' WHERE email = 'ton@email.fr';`
 
 ## En cas de problème
+Le build commence par une **vérification de la configuration** : ouvre le déploiement → *Building* et
+regarde le bloc « Vérification de la configuration tresser.fr ». Chaque ❌ indique quoi corriger.
+
 - **Build en erreur « Invalid environment configuration »** : une variable de l'étape 5 manque ou est trop courte.
 - **Pas d'e-mail reçu** : vérifie la clé Resend et que tu utilises l'adresse de ton compte Resend.
 - **« forbidden_origin »** : ouvre le site via le lien du déploiement (pas un autre domaine).

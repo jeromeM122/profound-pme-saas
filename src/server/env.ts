@@ -1,6 +1,7 @@
 import 'server-only'
 import { z } from 'zod'
 import { appUrl } from '@/server/security/app-origin'
+import { databaseUrl, redisCredentials } from '@/server/database-url'
 import { isLocalhostUrl } from '@/server/security/localhost'
 
 const optional = z.string().trim().min(1).optional().or(z.literal('').transform(() => undefined))
@@ -43,8 +44,9 @@ export function env(): Env {
   const parsed = schema.safeParse({
     ...process.env,
     APP_URL: appUrl(),
-    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL,
-    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN,
+    DATABASE_URL: databaseUrl(),
+    UPSTASH_REDIS_REST_URL: redisCredentials().url,
+    UPSTASH_REDIS_REST_TOKEN: redisCredentials().token,
   })
   if (!parsed.success) {
     const details = parsed.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n')
