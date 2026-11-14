@@ -50,4 +50,5 @@ const run = (label, cmd, args) => {
 run('Génération du client Prisma', 'npx', ['prisma', 'generate'])
 run('Migrations de la base', 'npx', ['prisma', 'migrate', 'deploy'])
 run('Synchronisation du catalogue', 'npx', ['tsx', 'prisma/seed-catalog.ts'])
+if (env.SEED_ADMIN_EMAIL) run('Attribution du rôle administrateur', 'npx', ['tsx', 'prisma/seed.ts'])
 run('Build Next.js', 'npx', ['next', 'build'])

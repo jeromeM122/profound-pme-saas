@@ -42,6 +42,10 @@ Le build applique lui-même les migrations de la base (`vercel-build`).
 *Settings → Deployment Protection* → **Vercel Authentication : Standard Protection** (activé par défaut).
 Ouvre le lien du déploiement dans une fenêtre privée : Vercel doit te demander de te connecter.
 
+## 7 bis. Devenir administratrice
+Ajoute la variable `SEED_ADMIN_EMAIL` (Preview) avec l'adresse e-mail que tu utilises pour te connecter, puis redéploie :
+le build attribue le rôle ADMIN à ce compte (accès à `/admin` et à la modération des vidéos).
+
 ## 8. Tester
 - Ouvre le lien (connecté à Vercel) → fais le diagnostic → *Connexion* avec **ton** e-mail → clique le lien reçu.
 - Pour devenir admin : *Storage → Neon → Open in Neon → SQL Editor* :
