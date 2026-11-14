@@ -23,6 +23,7 @@
     "db:catalog": "tsx prisma/seed-catalog.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "1.8.0",
     "@auth/prisma-adapter": "2.11.3",
     "@fontsource-variable/dm-sans": "5.3.0",
     "@fontsource/dm-mono": "5.3.0",

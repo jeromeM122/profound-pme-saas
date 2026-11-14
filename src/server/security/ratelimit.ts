@@ -16,6 +16,7 @@ export const POLICIES = {
   affiliateRedirect: { tokens: 60, window: '1 m' }, // /go/*
   media: { tokens: 600, window: '1 m' }, // /api/media/* (video range requests)
   upload: { tokens: 20, window: '1 h' }, // photo / video uploads per user
+  scan: { tokens: 6, window: '1 h' }, // AI hair scans (paid model call)
   apiDefault: { tokens: 120, window: '1 m' },
 } as const satisfies Record<string, { tokens: number; window: Window }>
 
@@ -70,7 +71,9 @@ function createUpstashLimiter(url: string, token: string): Limiter {
   }
 }
 
-let singleton: Limiter | undefined
+// Shared across module copies (Next bundles server code into several chunks): one limiter per process.
+const g = globalThis as unknown as { __tresserLimiter?: Limiter }
+let singleton: Limiter | undefined = g.__tresserLimiter
 export function limiter(): Limiter {
   if (singleton) return singleton
   // Upstash via the Vercel Marketplace may expose KV_REST_API_* (or prefixed) names.
@@ -78,6 +81,7 @@ export function limiter(): Limiter {
   if (url && token) singleton = createUpstashLimiter(url, token)
   else if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'preview' && !isLocalhostUrl(appUrl())) throw new Error('Rate limiting requires Upstash Redis in production')
   else singleton = createMemoryLimiter()
+  g.__tresserLimiter = singleton
   return singleton
 }
 

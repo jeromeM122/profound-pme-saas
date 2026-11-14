@@ -3,6 +3,8 @@ import { headers } from 'next/headers'
 import { appUrl } from '@/server/security/app-origin'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
+import { BottomTabBar } from '@/components/app/BottomTabBar'
+import { auth } from '@/server/auth'
 import { fontMono, fontSans } from './fonts'
 import './globals.css'
 
@@ -20,6 +22,7 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, them
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Reading request headers opts every page into dynamic rendering, which the per-request CSP nonce requires.
   await headers()
+  const session = await auth()
   return (
     <html lang="fr" className={`${fontSans.variable} ${fontMono.variable}`}>
       <body className="flex min-h-dvh flex-col">
@@ -33,7 +36,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main id="contenu" className="w-full flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <div className="pb-[var(--tabbar-h)]">
+          <SiteFooter />
+        </div>
+        <BottomTabBar signedIn={Boolean(session?.user)} />
       </body>
     </html>
   )

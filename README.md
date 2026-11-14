@@ -46,6 +46,7 @@ Pourquoi `SameSite=Lax` et pas `Strict` : une visiteuse arrivant depuis un lien 
 
 ## Parcours utilisatrice
 
+0. **Scan capillaire** (`/scan`) — photo analysée par Claude (vision), texture 1A–4C + observations, photo jamais stockée ; pré-remplit le diagnostic (4 questions).
 1. **Mon diagnostic** (`/diagnostic`) — 6 questions, résultat immédiat, consentement RGPD.
 2. **Ma routine** (`/ma-routine`) — étapes adaptées (texture, porosité, objectifs), produit recommandé par étape (adéquation + preuve communautaire + disponibilité), 3 alternatives, « Je l'ai déjà ».
 3. **Mes produits** — liste d'achats des produits manquants, regroupée par boutique, clics suivis via `/go`.

@@ -38,12 +38,21 @@
     from { opacity: 0; transform: translateY(0.75rem); }
     to { opacity: 1; transform: none; }
   }
+  --animate-scan: scan 1.6s ease-in-out infinite;
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(300%); }
+  }
   --animate-sheen: sheen 6s ease-in-out infinite;
   @keyframes sheen {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
   }
 }
+
+/* Height of the mobile bottom tab bar (0 from md, where the desktop header takes over) */
+:root { --tabbar-h: calc(4.4rem + env(safe-area-inset-bottom)); }
+@media (min-width: 768px) { :root { --tabbar-h: 0px; } }
 
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
@@ -55,7 +64,7 @@
 
 /* ── Buttons: rectangular, small, widely tracked ─────────────────────────── */
 @utility btn {
-  @apply relative inline-flex min-h-12 items-center justify-center overflow-hidden px-8 text-[0.72rem] font-normal uppercase tracking-[0.22em] transition-colors duration-500 ease-brand disabled:opacity-50;
+  @apply relative inline-flex min-h-12 items-center justify-center overflow-hidden rounded-full px-7 text-[0.72rem] font-normal uppercase tracking-[0.22em] transition-colors duration-500 ease-brand disabled:opacity-50;
 }
 /* Primary: encre, with a champagne light sweeping across on hover */
 @utility btn-primary {
@@ -75,9 +84,9 @@
 @utility btn-light { @apply btn bg-creme text-encre hover:bg-champagne; }
 
 @utility field {
-  @apply min-h-12 w-full border-0 border-b border-encre/30 bg-transparent px-0 text-base font-light text-encre placeholder:text-taupe/70 focus:border-or focus:outline-none;
+  @apply min-h-12 w-full rounded-2xl border border-ligne bg-perle px-4 text-base font-light text-encre placeholder:text-taupe/70 focus:border-or focus:outline-none;
 }
-@utility card { @apply border border-ligne bg-perle p-7; }
+@utility card { @apply rounded-3xl border border-ligne bg-perle p-6 sm:p-7; }
 @utility kicker { @apply font-mono text-[0.68rem] font-normal uppercase tracking-[0.28em]; }
 
 /* Display type: large, light, airy */

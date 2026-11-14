@@ -1,241 +1,197 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { ScanIcon } from '@/components/app/Icons'
 import { Wave } from '@/components/brand/Wave'
-import type { WaveName } from '@/components/brand/wave-paths'
-import { Reveal } from '@/components/motion/Reveal'
-import { ButtonLabel } from '@/components/ui/ButtonLabel'
-import cindyImg from '@/assets/photos/cindy.webp'
-import gabouImg from '@/assets/photos/gabou.webp'
-import joannaImg from '@/assets/photos/joanna.webp'
+import { HairBadge } from '@/components/profile/HairBadge'
+import { MatchBadge } from '@/components/routines/MatchBadge'
+import { loadVideos, VideoGrid } from '@/components/video/VideoRail'
 import laurenBannerImg from '@/assets/photos/lauren-banniere.webp'
-import laurenRoutineImg from '@/assets/photos/lauren-routine.webp'
-import lindsayImg from '@/assets/photos/lindsay.webp'
 import tresserImg from '@/assets/photos/tresser.webp'
+import { PRODUCTS } from '@/content/catalog'
+import { plannedSteps, STEP_INFO, WEEK, weeklyRitual } from '@/content/regimen'
+import { CATEGORY_LABEL, CATEGORY_SLUG, rankRoutines, scoreFit, type RoutineCategory } from '@/content/routines'
+import { TEXTURES } from '@/lib/hair/options'
+import { auth } from '@/server/auth'
+import { getVisitorProfile } from '@/server/hair/visitor-profile'
 
-const TEXTURES: { code: string; label: string; wave: WaveName }[] = [
-  { code: '1A', label: 'Raides fins', wave: 'swell' },
-  { code: '1B', label: 'Raides avec corps', wave: 'swell' },
-  { code: '1C', label: 'Raides épais', wave: 'swell' },
-  { code: '2A', label: 'Ondulés légers', wave: 'wave' },
-  { code: '2B', label: 'Ondulés', wave: 'wave' },
-  { code: '2C', label: 'Ondulés épais', wave: 'wave' },
-  { code: '3A', label: 'Boucles larges', wave: 'tight' },
-  { code: '3B', label: 'Boucles ressort', wave: 'tight' },
-  { code: '3C', label: 'Boucles serrées', wave: 'tight' },
-  { code: '4A', label: 'Frisés serrés', wave: 'curl' },
-  { code: '4B', label: 'Crépus en Z', wave: 'curl' },
-  { code: '4C', label: 'Crépus très serrés', wave: 'curl' },
-]
+/** Index of today in WEEK (Mon = 0), in Paris time. */
+function todayIndex(): number {
+  const day = new Intl.DateTimeFormat('en-GB', { weekday: 'short', timeZone: 'Europe/Paris' }).format(new Date())
+  return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(day)
+}
 
-/** Community routines published on tresser.fr (photos reused from the brand's own articles). */
-const ROUTINES = [
-  { name: 'Cindy', title: 'Ses essentiels pour cheveux crépus', img: cindyImg, alt: 'Cindy, cheveux crépus relevés en chignon, lunettes de soleil', href: '/routines/cindy' },
-  { name: 'Joanna', title: 'Une routine multitexture', img: joannaImg, alt: 'Joanna, cheveux bouclés volumineux, assise en terrasse', href: '/routines/routine-capillaire-multitexture-joanna' },
-  { name: 'Lindsay', title: 'Routine minimaliste pour locks', img: lindsayImg, alt: 'Locks de Lindsay vues de dos', href: '/routines/soin-locks-lindsay' },
-  { name: 'Gabou', title: 'Cheveux frisés et bouclés', img: gabouImg, alt: 'Gabou, cheveux frisés courts, lunettes teintées', href: '/routines/cheveux-boucles-frises-gabou' },
-] as const
+const TODAY_COPY = {
+  wash: { title: 'C’est ton wash day', text: 'Toutes les étapes de ta routine, dans l’ordre.' },
+  refresh: { title: 'Jour de rafraîchissement', text: 'Une brume d’eau et ton soin sans rinçage pour réveiller tes boucles.' },
+  rest: { title: 'Jour de repos', text: 'Pas de manipulation : protège tes cheveux la nuit avec du satin.' },
+} as const
 
-const RITUAL = [
-  { n: 'I', title: 'Le diagnostic', text: 'Texture, porosité, cuir chevelu, objectifs : six questions pour révéler ton profil capillaire.' },
-  { n: 'II', title: 'Les jumelles', text: 'Suis les routines de celles et ceux qui partagent exactement ton profil.' },
-  { n: 'III', title: 'Le rituel', text: 'Des soins choisis pour ta texture, et vus en vidéo sur des cheveux comme les tiens.' },
-] as const
+export default async function Home() {
+  const [profile, session] = await Promise.all([getVisitorProfile(), auth()])
+  const firstName = session?.user?.name?.split(' ')[0]
+  const routines = rankRoutines(profile).slice(0, 10)
+  const products = PRODUCTS.map((p) => ({ p, m: profile ? scoreFit({ textures: p.textures, goals: p.goals, porosity: null }, profile) : null }))
+    .sort((a, b) => (b.m?.score ?? 0) - (a.m?.score ?? 0) || b.p.usages.length - a.p.usages.length)
+    .slice(0, 10)
+  const videos = await loadVideos({ textures: profile ? [profile.texture] : undefined, limit: 4 })
+  const today = profile ? weeklyRitual(profile).plan[todayIndex()] : null
+  const steps = profile ? plannedSteps(profile) : []
 
-export default function Home() {
   return (
-    <>
-      {/* HERO — editorial split */}
-      <section className="mx-auto grid max-w-7xl items-center gap-14 px-4 pt-16 pb-24 sm:px-8 md:grid-cols-[1.1fr_1fr] md:pt-24">
-        <div className="grid gap-8">
-          <p className="kicker text-or">Diagnostic capillaire</p>
-          <h1 className="display text-5xl sm:text-7xl lg:text-[5.5rem]">
-            Ma texture,
-            <br />
-            <span className="accent">ma couronne.</span>
-          </h1>
-          <p className="max-w-md text-lg leading-relaxed text-taupe">
-            Un lieu pensé pour les textures, les boucles, les histoires qu’on porte sur la tête.
-          </p>
-          <div className="flex flex-wrap items-center gap-6">
-            <Link href="/diagnostic" className="btn-primary">
-              <ButtonLabel>Créer ma routine</ButtonLabel>
-            </Link>
-            <Link href="/jumelles" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
-              La communauté
+    <div className="mx-auto grid max-w-6xl gap-10 px-4 pt-5 pb-14 sm:px-8 md:pt-10">
+      {/* GREETING */}
+      <header className="grid gap-1">
+        <p className="kicker text-[0.6rem] text-taupe">
+          {new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date())}
+        </p>
+        <h1 className="display text-3xl sm:text-5xl">
+          {firstName ? `Bonjour ${firstName}` : 'Bonjour'}
+          <span className="accent">{profile ? ', prête pour ta routine ?' : ', parlons cheveux'}</span>
+        </h1>
+      </header>
+
+      {/* PRIMARY CARD */}
+      {profile && today ? (
+        <section aria-labelledby="today" className="grid gap-5 overflow-hidden rounded-[2rem] bg-encre p-6 text-creme sm:grid-cols-[1fr_auto] sm:items-end sm:p-8">
+          <div className="grid gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="kicker text-[0.6rem] text-or-clair">Aujourd’hui · {WEEK[todayIndex()]}</p>
+              <HairBadge texture={profile.texture} porosity={profile.porosity} goals={profile.goals} size="sm" />
+            </div>
+            <h2 id="today" className="display text-3xl sm:text-4xl">{TODAY_COPY[today.kind].title}</h2>
+            <p className="max-w-md text-creme/80">{TODAY_COPY[today.kind].text}</p>
+            {today.kind === 'wash' && (
+              <ol className="flex flex-wrap gap-2">
+                {steps.map((s, i) => (
+                  <li key={s.type} className="rounded-full border border-creme/25 px-3 py-1 text-xs">
+                    {i + 1}. {STEP_INFO[s.type].title}
+                  </li>
+                ))}
+              </ol>
+            )}
+            <ol className="mt-2 grid grid-cols-7 gap-1" aria-label="Ma semaine">
+              {weeklyRitual(profile).plan.map((d, i) => (
+                <li key={d.day} className={`grid justify-items-center gap-1 rounded-xl py-2 text-[0.6rem] ${i === todayIndex() ? 'bg-or text-creme' : d.kind === 'wash' ? 'bg-creme/15' : d.kind === 'refresh' ? 'bg-creme/8' : ''}`}>
+                  <span>{d.day}</span>
+                  <span aria-hidden className={`size-1.5 rounded-full ${d.kind === 'wash' ? 'bg-or-clair' : d.kind === 'refresh' ? 'bg-creme/60' : 'bg-transparent'}`} />
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="grid gap-2">
+            <Link href="/ma-routine" className="btn bg-creme text-encre hover:bg-champagne">Ouvrir ma routine</Link>
+            <Link href={session?.user ? '/ma-routine/suivi' : ('/connexion?callbackUrl=%2Fma-routine%2Fsuivi' as '/connexion')} className="btn border border-creme/30 text-creme hover:bg-creme/10">
+              Ajouter une photo
             </Link>
           </div>
-        </div>
-
-        {/* Framed editorial portrait with an offset gold hairline */}
-        <figure className="relative mx-auto w-full max-w-md pr-4 pb-4">
-          <div aria-hidden className="absolute inset-0 top-4 left-4 border border-or-clair" />
-          <Image
-            src={tresserImg}
-            alt="Trois portraits de femmes aux cheveux crépus naturels, en lumière chaude"
-            priority
-            placeholder="blur"
-            sizes="(min-width: 768px) 28rem, 90vw"
-            className="relative aspect-[4/5] w-full object-cover"
-          />
-          <figcaption className="kicker absolute -bottom-6 left-4 text-[0.6rem] text-taupe">De 1A à 4C · toutes les textures</figcaption>
-        </figure>
-      </section>
-
-      {/* MANIFESTE */}
-      <section className="bg-perle px-4 py-28 sm:py-36">
-        <Reveal className="mx-auto grid max-w-4xl justify-items-center gap-10 text-center">
-          <Wave name="wave" width={140} className="text-or" />
-          <p className="text-3xl leading-snug font-light sm:text-5xl sm:leading-tight">
-            Tresser, c’est <span className="accent">réunir</span> : des rituels, des histoires, des héritages.
-          </p>
-          <p className="kicker text-taupe">Chaque tresse est une archive vivante</p>
-        </Reveal>
-      </section>
-
-      {/* EDITORIAL BANNER */}
-      <section className="relative bg-perle">
-        <Image
-          src={laurenBannerImg}
-          alt="Lauren passe la main dans ses cheveux crépus, de profil, sur fond clair"
-          placeholder="blur"
-          sizes="100vw"
-          className="h-[60vh] max-h-[640px] min-h-[360px] w-full object-cover object-[30%_center]"
-        />
-        <div className="mx-auto max-w-7xl px-4 sm:px-8 md:absolute md:inset-0 md:flex md:items-center md:justify-end">
-          <Reveal className="grid gap-6 bg-perle/90 py-10 md:max-w-sm md:p-10 md:backdrop-blur-sm">
-            <p className="kicker text-or">La routine de Lauren</p>
-            <p className="display text-3xl sm:text-4xl">
-              Prendre soin, <span className="accent">en conscience</span>
-            </p>
-            <p className="leading-relaxed text-taupe">Des gestes simples, choisis pour sa texture : c’est ce que le diagnostic t’aide à construire.</p>
-            <Link href="/diagnostic" className="btn-ghost w-fit">
-              <ButtonLabel>Créer ma routine</ButtonLabel>
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* LE RITUEL — three steps */}
-      <section className="mx-auto max-w-7xl px-4 py-28 sm:px-8">
-        <Reveal className="mb-16 grid justify-items-center gap-4 text-center">
-          <p className="kicker text-or">Le rituel tresser</p>
-          <h2 className="display text-4xl sm:text-5xl">Trois gestes</h2>
-        </Reveal>
-        <ol className="grid border-y border-ligne md:grid-cols-3 md:divide-x md:divide-ligne">
-          {RITUAL.map((s) => (
-            <li key={s.n}>
-              <Reveal className="grid gap-5 px-6 py-12 text-center md:px-10">
-                <span className="font-light italic text-or text-3xl">{s.n}</span>
-                <h3 className="kicker text-sm text-encre">{s.title}</h3>
-                <p className="leading-relaxed text-taupe">{s.text}</p>
-              </Reveal>
-            </li>
-          ))}
-        </ol>
-        <div className="mt-14 flex justify-center">
-          <Link href="/diagnostic" className="btn-ghost">
-            <ButtonLabel>Commencer le diagnostic</ButtonLabel>
-          </Link>
-        </div>
-      </section>
-
-      {/* COMMUNITY ROUTINES */}
-      <section className="mx-auto max-w-7xl px-4 pb-28 sm:px-8">
-        <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-6">
-          <div className="grid gap-4">
-            <p className="kicker text-or">Elles et ils racontent</p>
-            <h2 className="display text-4xl sm:text-5xl">
-              Les routines <span className="accent">de la communauté</span>
+        </section>
+      ) : (
+        <section aria-labelledby="scan" className="relative isolate overflow-hidden rounded-[2rem] bg-encre text-creme">
+          <Image src={tresserImg} alt="" priority placeholder="blur" sizes="(min-width: 768px) 60rem, 100vw" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-55" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-encre via-encre/40 to-transparent" />
+          <div className="grid min-h-[26rem] content-end gap-4 p-6 sm:min-h-[30rem] sm:p-10">
+            <p className="kicker text-[0.6rem] text-or-clair">Nouveau · scan capillaire</p>
+            <h2 id="scan" className="display text-4xl sm:text-6xl">
+              Une photo.
+              <br />
+              <span className="accent">Ta routine.</span>
             </h2>
+            <p className="max-w-md text-creme/85">L’IA lit ta texture sur une photo, tu réponds à 4 questions, et ta routine sur-mesure est prête.</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/scan" className="btn gap-3 bg-creme text-encre hover:bg-champagne">
+                <ScanIcon className="size-5" /> Scanner mes cheveux
+              </Link>
+              <Link href="/diagnostic" className="kicker border-b border-creme/50 pb-1 text-[0.6rem] text-creme hover:border-or-clair">
+                ou 6 questions
+              </Link>
+            </div>
           </div>
-          <Link href="/routines" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
-            Toutes les routines
+        </section>
+      )}
+
+      {/* STORIES — community routines */}
+      <section aria-labelledby="stories" className="grid gap-4">
+        <div className="flex items-end justify-between">
+          <h2 id="stories" className="text-xl">{profile ? 'Routines proches de toi' : 'Routines de la communauté'}</h2>
+          <Link href="/routines" className="kicker text-[0.58rem] text-or">Tout voir</Link>
+        </div>
+        <ul className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          {routines.map(({ routine: r, match }) => {
+            const img = r.heroMobile ?? r.hero
+            return (
+              <li key={r.slug} className="snap-start">
+                <Link href={`/routines/${r.slug}` as '/routines'} className="grid w-20 justify-items-center gap-2 text-center">
+                  <span className={`rounded-full p-[3px] ${match && match.score >= 75 ? 'bg-gradient-to-tr from-or via-or-clair to-or' : 'bg-ligne'}`}>
+                    {img && <Image src={img.src} width={img.w} height={img.h} alt="" sizes="72px" className="size-[4.5rem] rounded-full border-2 border-creme object-cover" />}
+                  </span>
+                  <span className="w-full truncate text-xs">{r.name}</span>
+                  {match && <span className="kicker -mt-1 text-[0.5rem] text-or">{match.score} %</span>}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+
+      {/* TEXTURE SHORTCUTS */}
+      <nav aria-label="Explorer par texture" className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
+        {(Object.keys(CATEGORY_LABEL) as RoutineCategory[]).map((c) => (
+          <Link key={c} href={`/routines?texture=${CATEGORY_SLUG[c]}` as '/routines'} className="whitespace-nowrap rounded-full border border-ligne bg-perle px-4 py-2.5 text-sm hover:border-or">
+            {CATEGORY_LABEL[c]}
           </Link>
-        </Reveal>
-        <ul className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-          {ROUTINES.map((r) => (
-            <li key={r.name}>
-              <Link href={r.href as '/routines'} className="group grid gap-4">
-                <div className="overflow-hidden bg-sable">
-                  <Image
-                    src={r.img}
-                    alt={r.alt}
-                    placeholder="blur"
-                    sizes="(min-width: 1024px) 22vw, 45vw"
-                    className="aspect-[3/4] w-full object-cover transition-transform duration-[1.4s] ease-brand group-hover:scale-[1.04]"
-                  />
+        ))}
+      </nav>
+
+      {/* PRODUCTS CAROUSEL */}
+      <section aria-labelledby="pour-toi" className="grid gap-4">
+        <div className="flex items-end justify-between">
+          <h2 id="pour-toi" className="text-xl">{profile ? `Pour tes cheveux ${TEXTURES[profile.texture].code}` : 'Les plus utilisés'}</h2>
+          <Link href="/produits" className="kicker text-[0.58rem] text-or">Tout voir</Link>
+        </div>
+        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          {products.map(({ p, m }) => (
+            <li key={p.slug} className="w-40 shrink-0 snap-start sm:w-48">
+              <Link href={`/produits/${p.slug}` as '/produits'} className="grid gap-2">
+                <div className="relative overflow-hidden rounded-2xl bg-perle">
+                  {p.image && <Image src={p.image.src} width={p.image.w} height={p.image.h} alt={p.name} sizes="12rem" className="aspect-square w-full object-cover" />}
+                  {m && <div className="absolute top-2 left-2"><MatchBadge match={m} size="sm" /></div>}
                 </div>
-                <div className="grid gap-1">
-                  <p className="kicker text-[0.62rem] text-or">{r.name}</p>
-                  <p className="text-lg leading-snug">{r.title}</p>
-                  <p className="kicker mt-1 text-[0.6rem] text-taupe transition-colors group-hover:text-encre">Voir sa routine →</p>
-                </div>
+                <p className="kicker truncate text-[0.52rem] text-or">{p.brand ?? p.offer?.merchantName ?? 'Communauté'}</p>
+                <p className="line-clamp-2 text-sm leading-snug">{p.name}</p>
               </Link>
             </li>
           ))}
         </ul>
       </section>
 
-      {/* TEXTURES */}
-      <section className="bg-sable px-4 py-28 sm:px-8">
-        <div className="mx-auto max-w-7xl">
-          <Reveal className="mb-14 grid gap-6 md:grid-cols-2 md:items-end">
-            <div className="grid gap-4">
-              <p className="kicker text-or">Toutes les textures</p>
-              <h2 className="display text-4xl sm:text-5xl">
-                Du raide <span className="accent">au crépu</span>
-              </h2>
-            </div>
-            <p className="max-w-md leading-relaxed text-taupe md:justify-self-end">
-              Chaque profil a sa place. Trouve le tien et découvre les soins appliqués sur des cheveux comme les tiens.
-            </p>
-          </Reveal>
-          <ul className="grid grid-cols-2 gap-px bg-ligne sm:grid-cols-3 lg:grid-cols-4">
-            {TEXTURES.map((t) => (
-              <li key={t.code} className="group grid aspect-square content-between bg-perle p-6 lg:aspect-[5/4] transition-colors duration-700 ease-brand hover:bg-creme">
-                <Wave name={t.wave} width={90} className="text-or-clair transition-colors duration-700 group-hover:text-or" />
-                <div className="grid gap-2">
-                  <span className="text-5xl font-extralight sm:text-6xl">{t.code}</span>
-                  <span className="kicker text-[0.62rem] text-taupe">{t.label}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* VIDEOS */}
+      {videos.length > 0 && (
+        <section aria-labelledby="videos" className="grid gap-4">
+          <h2 id="videos" className="text-xl">{profile ? `En vidéo, sur cheveux ${TEXTURES[profile.texture].code}` : 'En vidéo'}</h2>
+          <VideoGrid videos={videos} />
+        </section>
+      )}
 
-      {/* VIDEO PROMISE */}
-      <section className="mx-auto grid max-w-6xl items-center gap-16 px-4 py-28 sm:px-8 md:grid-cols-[1fr_auto]">
-        <Reveal className="grid gap-6">
-          <p className="kicker text-or">Vu sur ta texture</p>
-          <h2 className="display text-4xl sm:text-5xl">
-            Nos cheveux <span className="accent">parlent</span>
-          </h2>
-          <p className="max-w-md leading-relaxed text-taupe">
-            Chaque soin montré en vidéo par la communauté — TikTok, Reels, Shorts — sur des cheveux comme les tiens.
-          </p>
-        </Reveal>
-        <Reveal className="mx-auto">
-          <div aria-hidden className="relative grid aspect-[9/16] w-56 place-items-center overflow-hidden rounded-[2rem] border-[6px] border-perle bg-sable shadow-[0_30px_60px_-30px_rgb(28_24_20/0.45)]">
-            <Image src={laurenRoutineImg} alt="" placeholder="blur" sizes="14rem" className="absolute inset-0 h-full w-full object-cover object-[35%_center]" />
-            <span className="relative grid size-16 place-items-center rounded-full border border-or-clair bg-creme/90 backdrop-blur">
-              <span className="ml-1 size-0 border-y-[8px] border-l-[13px] border-y-transparent border-l-or" />
-            </span>
+      {/* COMMUNITY / PROGRESS */}
+      <section className="grid gap-4 md:grid-cols-2">
+        <Link href={session?.user ? '/ma-routine/suivi' : ('/connexion?callbackUrl=%2Fma-routine%2Fsuivi' as '/connexion')} className="group relative isolate grid min-h-48 content-end overflow-hidden rounded-[2rem] p-6 text-encre">
+          <Image src={laurenBannerImg} alt="" placeholder="blur" sizes="(min-width: 768px) 30rem, 100vw" className="absolute inset-0 -z-10 h-full w-full object-cover object-[25%_center] transition-transform duration-[1.4s] group-hover:scale-105" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent via-perle/40 to-perle/95" />
+          <div className="grid justify-items-end gap-1 text-right">
+            <p className="kicker text-[0.58rem] text-or">Mon suivi</p>
+            <p className="text-2xl">Avant / après</p>
+            <p className="max-w-[14rem] text-sm text-taupe">Une photo par wash day pour voir ta routine faire effet.</p>
           </div>
-        </Reveal>
+        </Link>
+        <Link href="/jumelles" className="grid min-h-48 content-between rounded-[2rem] border border-ligne bg-perle p-6 hover:border-or">
+          <Wave name="curl" width={150} className="text-or" />
+          <div className="grid gap-1">
+            <p className="kicker text-[0.58rem] text-or">Communauté</p>
+            <p className="text-2xl">Tes jumelles capillaires</p>
+            <p className="text-sm text-taupe">Même texture, même porosité : suis leurs routines et leurs salles de bain.</p>
+          </div>
+        </Link>
       </section>
-
-      {/* CTA */}
-      <section className="border-t border-ligne px-4 py-24 text-center">
-        <Reveal className="mx-auto grid max-w-2xl justify-items-center gap-8">
-          <p className="display text-3xl sm:text-4xl">
-            Ton profil, <span className="accent">révélé</span> en soixante secondes
-          </p>
-          <Link href="/diagnostic" className="btn-primary">
-            <ButtonLabel>Faire mon diagnostic</ButtonLabel>
-          </Link>
-        </Reveal>
-      </section>
-    </>
+    </div>
   )
 }

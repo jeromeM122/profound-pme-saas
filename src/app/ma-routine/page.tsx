@@ -325,7 +325,7 @@ export default async function MaRoutinePage() {
       </section>
 
       {/* MOBILE STICKY BAR */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ligne bg-creme/95 px-4 py-3 backdrop-blur lg:hidden">
+      <div className="fixed inset-x-0 bottom-[var(--tabbar-h)] z-30 border-t border-ligne bg-creme/95 px-4 py-3 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="truncate text-sm">Ma routine {texture.code}</p>
