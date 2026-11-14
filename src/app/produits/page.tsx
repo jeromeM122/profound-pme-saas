@@ -17,8 +17,12 @@ const CATEGORIES = Object.keys(CATEGORY_LABEL) as RoutineCategory[]
 export default async function ProduitsPage({ searchParams }: Props) {
   const sp = await searchParams
   const active = categoryFromSlug(typeof sp.texture === 'string' ? sp.texture : undefined)
+  const q = typeof sp.q === 'string' ? sp.q.trim().slice(0, 60) : ''
+  const norm = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const terms = norm(q).split(/\s+/).filter(Boolean)
   const profile = await getVisitorProfile()
-  const rows = PRODUCTS.filter((p) => !active || p.categories.includes(active)).map((p, i) => ({
+  const haystack = (p: (typeof PRODUCTS)[number]) => norm([p.name, p.brand, p.descriptor, p.offer?.merchantName, ...p.usages.map((u) => u.stepName)].filter(Boolean).join(' '))
+  const rows = PRODUCTS.filter((p) => (!active || p.categories.includes(active)) && terms.every((t) => haystack(p).includes(t))).map((p, i) => ({
     p,
     i,
     match: profile ? scoreFit({ textures: p.textures, goals: p.goals, porosity: null }, profile) : null,
@@ -47,6 +51,13 @@ export default async function ProduitsPage({ searchParams }: Props) {
         )}
       </section>
 
+      <form role="search" action="/produits" className="mx-auto mb-8 flex max-w-xl items-end gap-3 px-4">
+        {active && <input type="hidden" name="texture" value={CATEGORY_SLUG[active]} />}
+        <label htmlFor="q" className="sr-only">Rechercher un produit, une marque, une étape</label>
+        <input id="q" name="q" type="search" defaultValue={q} maxLength={60} placeholder="Shampoing, masque, Activilong…" className="field" />
+        <button className="btn-primary min-h-11 shrink-0 px-5">Rechercher</button>
+      </form>
+
       <nav aria-label="Filtrer par texture" className="mx-auto max-w-7xl px-4 sm:px-8">
         <ul className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:justify-center">
           <li>
@@ -62,6 +73,20 @@ export default async function ProduitsPage({ searchParams }: Props) {
         </ul>
       </nav>
 
+      {q && (
+        <p className="mx-auto mt-8 max-w-7xl px-4 text-sm text-taupe sm:px-8">
+          {rows.length} résultat{rows.length > 1 ? 's' : ''} pour « {q} » ·{' '}
+          <Link href={active ? (`/produits?texture=${CATEGORY_SLUG[active]}` as '/produits') : '/produits'} className="underline underline-offset-4 hover:text-or">
+            effacer
+          </Link>
+        </p>
+      )}
+      {rows.length === 0 && (
+        <div className="mx-auto mt-10 grid max-w-md justify-items-center gap-4 px-4 text-center">
+          <p className="text-lg">Aucun produit ne correspond.</p>
+          <Link href="/routines" className="btn-ghost">Explorer les routines</Link>
+        </div>
+      )}
       <ul className="mx-auto mt-10 grid max-w-7xl grid-cols-2 gap-x-4 gap-y-10 px-4 sm:px-8 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
         {rows.map(({ p, match }) => (
           <li key={p.slug}>

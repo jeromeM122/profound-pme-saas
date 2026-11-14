@@ -58,7 +58,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap items-center gap-6">
             <Link href="/diagnostic" className="btn-primary">
-              <ButtonLabel>Découvrir mon profil</ButtonLabel>
+              <ButtonLabel>Créer ma routine</ButtonLabel>
             </Link>
             <Link href="/jumelles" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
               La communauté

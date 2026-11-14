@@ -44,6 +44,14 @@ Appliquée d'après la *charte graphique de tresser.fr* :
 
 Pourquoi `SameSite=Lax` et pas `Strict` : une visiteuse arrivant depuis un lien TikTok/Instagram apparaîtrait déconnectée, et Apple Sign-In renvoie un POST cross-site. Le CSRF est bloqué par la vérification d'`Origin`.
 
+## Parcours utilisatrice
+
+1. **Mon diagnostic** (`/diagnostic`) — 6 questions, résultat immédiat, consentement RGPD.
+2. **Ma routine** (`/ma-routine`) — étapes adaptées (texture, porosité, objectifs), produit recommandé par étape (adéquation + preuve communautaire + disponibilité), 3 alternatives, « Je l'ai déjà ».
+3. **Mes produits** — liste d'achats des produits manquants, regroupée par boutique, clics suivis via `/go`.
+4. **Mon rituel** — semaine type (wash day, rafraîchissement, protection de nuit).
+5. **Ma communauté** — routines de profils proches, jumelles capillaires, salle de bain publique.
+
 ## Feuille de route
 
 1. ✅ Socle, sécurité & authentification

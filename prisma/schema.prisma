@@ -90,6 +90,17 @@ enum BathroomStatus {
   WISHLIST
 }
 
+/// Steps of a personal hair-care regimen (« Ma routine »)
+enum RoutineStepType {
+  PRE_POO
+  CLEANSE
+  CONDITION
+  MASK
+  LEAVE_IN
+  SEAL
+  STYLE
+}
+
 enum OrderStatus {
   PENDING
   PAID
@@ -125,18 +136,19 @@ model User {
   /// Soft delete; a scheduled job purges personal data
   deletedAt     DateTime?
 
-  accounts     Account[]
-  sessions     Session[]
-  hairProfile  HairProfile?
-  socialLinks  SocialLink[]
-  bathroom     BathroomItem[]
-  following    Follow[]       @relation("follower")
-  followers    Follow[]       @relation("following")
-  videosPosted SocialVideo[]  @relation("submitter")
-  clicks       ClickEvent[]   @relation("clicker")
-  attributed   ClickEvent[]   @relation("creator")
-  conversions  Conversion[]
-  orders       Order[]
+  accounts       Account[]
+  sessions       Session[]
+  hairProfile    HairProfile?
+  socialLinks    SocialLink[]
+  bathroom       BathroomItem[]
+  following      Follow[]        @relation("follower")
+  followers      Follow[]        @relation("following")
+  videosPosted   SocialVideo[]   @relation("submitter")
+  clicks         ClickEvent[]    @relation("clicker")
+  attributed     ClickEvent[]    @relation("creator")
+  conversions    Conversion[]
+  orders         Order[]
+  routineChoices RoutineChoice[]
 }
 
 /// OAuth tokens are intentionally NOT persisted (identity only — least privilege).
@@ -264,11 +276,12 @@ model Product {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
-  brand      Brand            @relation(fields: [brandId], references: [id])
-  offers     AffiliateOffer[]
-  videos     SocialVideo[]
-  bathroom   BathroomItem[]
-  orderItems OrderItem[]
+  brand          Brand            @relation(fields: [brandId], references: [id])
+  offers         AffiliateOffer[]
+  videos         SocialVideo[]
+  bathroom       BathroomItem[]
+  orderItems     OrderItem[]
+  routineChoices RoutineChoice[]
 
   @@index([status])
   @@index([brandId])
@@ -291,6 +304,20 @@ model BathroomItem {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@id([userId, productId])
+  @@index([productId])
+}
+
+/// The product a member chose for one step of their personal regimen (overrides the automatic pick)
+model RoutineChoice {
+  userId    String
+  step      RoutineStepType
+  productId String
+  updatedAt DateTime        @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, step])
   @@index([productId])
 }
 

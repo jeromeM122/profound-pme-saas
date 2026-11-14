@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Wave } from '@/components/brand/Wave'
+import { JourneySteps } from '@/components/journey/JourneySteps'
+import { plannedSteps, STEP_INFO } from '@/content/regimen'
 import { ButtonLabel } from '@/components/ui/ButtonLabel'
 import { BUDGET, GOALS, POROSITY, SCALP, TEXTURES } from '@/lib/hair/options'
 import { routineTips } from '@/lib/hair/tips'
@@ -27,7 +29,10 @@ export default async function ResultatPage() {
     { k: 'Budget', v: `${BUDGET[d.budget].label} (${BUDGET[d.budget].hint.toLowerCase()})` },
   ]
 
+  const steps = plannedSteps({ texture: d.texture, porosity: d.porosity, goals: d.goals })
   return (
+    <>
+    <JourneySteps current={1} done={1} />
     <div className="px-4 pt-14 pb-24">
       <section className="mx-auto grid max-w-5xl justify-items-center gap-6 text-center">
         <p className="kicker text-taupe">Ton diagnostic</p>
@@ -36,6 +41,24 @@ export default async function ResultatPage() {
         </h1>
         <p className="bg-champagne px-4 py-3 font-mono text-sm font-normal text-encre sm:text-lg">{d.badge}</p>
         <Wave name="curl" width={200} className="text-or" />
+      </section>
+
+      {/* NEXT STEP — the personal routine */}
+      <section className="mx-auto mt-14 grid max-w-5xl gap-6 border border-or-clair bg-perle p-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div className="grid gap-3">
+          <p className="kicker text-or">Étape suivante</p>
+          <p className="display text-3xl">Ta routine sur-mesure <span className="accent">est prête</span></p>
+          <ol className="flex flex-wrap gap-2">
+            {steps.map((s, i) => (
+              <li key={s.type} className="kicker border border-ligne bg-creme px-3 py-1.5 text-[0.58rem] text-taupe">
+                {i + 1}. {STEP_INFO[s.type].title}
+              </li>
+            ))}
+          </ol>
+        </div>
+        <Link href="/ma-routine" className="btn-primary">
+          <ButtonLabel>Découvrir ma routine</ButtonLabel>
+        </Link>
       </section>
 
       <section className="mx-auto mt-16 grid max-w-5xl gap-3 md:grid-cols-2">
@@ -91,5 +114,6 @@ export default async function ResultatPage() {
         </p>
       </section>
     </div>
+    </>
   )
 }

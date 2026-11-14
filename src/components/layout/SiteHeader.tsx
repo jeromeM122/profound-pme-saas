@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Logo } from '@/components/brand/Logo'
 import { auth } from '@/server/auth'
 
-const navLink = 'kicker text-encre/80 transition-colors hover:text-or'
+const navLink = 'kicker whitespace-nowrap text-encre/80 transition-colors hover:text-or'
 
 export async function SiteHeader() {
   const session = await auth()
@@ -25,9 +25,6 @@ export async function SiteHeader() {
             <Link href="/produits" className={navLink}>
               Produits
             </Link>
-            <Link href="/diagnostic" className={navLink}>
-              Diagnostic
-            </Link>
             <Link href="/jumelles" className={navLink}>
               Jumelles
             </Link>
@@ -36,8 +33,8 @@ export async function SiteHeader() {
             <Logo height={22} />
           </Link>
           <nav aria-label="Compte" className="col-start-3 flex items-center justify-end gap-6">
-            <Link href="/routines" className={`${navLink} md:hidden`}>
-              Routines
+            <Link href="/ma-routine" className={`${navLink} text-or`}>
+              Ma routine
             </Link>
             <Link href={signedIn ? '/compte' : '/connexion'} className={navLink}>
               {signedIn ? 'Mon compte' : 'Connexion'}
