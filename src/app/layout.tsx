@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from 'next'
 import { headers } from 'next/headers'
+import { appUrl } from '@/server/security/app-origin'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { fontMono, fontSans } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(appUrl() ?? 'http://localhost:3000'),
   title: { default: 'tresser.fr — ma texture, ma couronne', template: '%s · tresser.fr' },
   description:
     'Un lieu pensé pour les textures, les boucles, les histoires qu’on porte sur la tête. Diagnostic capillaire, communauté, routines et produits testés par des cheveux comme les tiens.',

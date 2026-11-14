@@ -18,13 +18,14 @@ export function isCrossSiteAllowed(pathname: string): boolean {
   return CROSS_SITE_ALLOWED.some((re) => re.test(pathname))
 }
 
-export function isSameOrigin(headers: Headers, expectedOrigin: string): boolean {
+export function isSameOrigin(headers: Headers, expected: string | readonly string[]): boolean {
+  const allowed = typeof expected === 'string' ? [expected] : expected
   const origin = headers.get('origin')
-  if (origin) return origin === expectedOrigin
+  if (origin) return allowed.includes(origin)
   const referer = headers.get('referer')
   if (!referer) return false
   try {
-    return new URL(referer).origin === expectedOrigin
+    return allowed.includes(new URL(referer).origin)
   } catch {
     return false
   }

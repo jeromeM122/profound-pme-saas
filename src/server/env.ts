@@ -1,5 +1,6 @@
 import 'server-only'
 import { z } from 'zod'
+import { appUrl } from '@/server/security/app-origin'
 import { isLocalhostUrl } from '@/server/security/localhost'
 
 const optional = z.string().trim().min(1).optional().or(z.literal('').transform(() => undefined))
@@ -39,7 +40,12 @@ let cached: Env | undefined
 /** Validated, typed environment. Fails fast with a readable error on misconfiguration. */
 export function env(): Env {
   if (cached) return cached
-  const parsed = schema.safeParse(process.env)
+  const parsed = schema.safeParse({
+    ...process.env,
+    APP_URL: appUrl(),
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN,
+  })
   if (!parsed.success) {
     const details = parsed.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n')
     throw new Error(`Invalid environment configuration:\n${details}`)

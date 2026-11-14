@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { allowedOrigins } from '@/server/security/app-origin'
 import { buildCsp } from '@/server/security/csp'
 import { hashIp } from '@/server/security/crypto'
 import { isCrossSiteAllowed, isSameOrigin, isStateChanging } from '@/server/security/origin'
@@ -16,8 +17,8 @@ export async function proxy(req: NextRequest) {
   const method = req.method.toUpperCase()
 
   if (isStateChanging(method) && !isCrossSiteAllowed(pathname)) {
-    const expected = process.env.APP_URL ? new URL(process.env.APP_URL).origin : req.nextUrl.origin
-    if (!isSameOrigin(req.headers, expected)) {
+    const configured = allowedOrigins()
+    if (!isSameOrigin(req.headers, configured.length ? configured : [req.nextUrl.origin])) {
       return NextResponse.json({ error: 'forbidden_origin' }, { status: 403 })
     }
   }

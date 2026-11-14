@@ -1,5 +1,6 @@
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { appUrl } from './app-origin'
 import { isLocalhostUrl } from './localhost'
 
 export type LimitResult = { success: boolean; limit: number; remaining: number; reset: number }
@@ -69,10 +70,11 @@ function createUpstashLimiter(url: string, token: string): Limiter {
 let singleton: Limiter | undefined
 export function limiter(): Limiter {
   if (singleton) return singleton
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  // Upstash via the Vercel Marketplace exposes KV_REST_API_* names.
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
   if (url && token) singleton = createUpstashLimiter(url, token)
-  else if (process.env.NODE_ENV === 'production' && !isLocalhostUrl(process.env.APP_URL)) throw new Error('Rate limiting requires Upstash Redis in production')
+  else if (process.env.NODE_ENV === 'production' && !isLocalhostUrl(appUrl())) throw new Error('Rate limiting requires Upstash Redis in production')
   else singleton = createMemoryLimiter()
   return singleton
 }
