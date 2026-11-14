@@ -1,48 +1,78 @@
 @import 'tailwindcss';
 
 /*
- * Charte graphique tresser.fr
+ * Charte graphique tresser.fr — dark "night drive" theme
  *  Couleurs web : Jaune citron #E8F800 · Bleu #3366FF · Noir #000000 (+ blanc)
  *  Teintes claires des applats (p.4) : lavande, menthe
- *  Typo : Apercu (+ Apercu Mono)  — see src/app/fonts.ts
- *  Univers : énergie, peps, dynamisme, colorblock.
+ *  Typo : Apercu (+ Apercu Mono) — see src/app/fonts.ts
+ *  Logo : blanc sur fond foncé, noir sur fond clair (jamais d'autre couleur).
  *
- * Accessibility rules (WCAG AA) derived from the palette:
- *  - citron is a BACKGROUND colour only (never text on white): black on citron = 17:1
- *  - white on bleu = 4.7:1 (OK for body text); black on bleu only for large/bold text
+ * Accessibility (WCAG AA): citron on noir = 17:1, blanc on bleu = 4.7:1,
+ * bleu as text on noir only for large/bold type.
  */
 @theme {
   --color-citron: #e8f800;
   --color-bleu: #3366ff;
-  --color-bleu-fonce: #1f4fe0;
   --color-noir: #000000;
+  --color-nuit: #0e0e0e;
+  --color-carbone: #181818;
   --color-blanc: #ffffff;
+  --color-ivoire: #f4f4ef;
   --color-lavande: #e4e8ff;
   --color-menthe: #e2fae1;
-  --color-gris: #555555;
-  --color-trait: #000000;
+  --color-gris: #a3a3a3;
 
   --font-sans: 'Apercu', var(--font-brand-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Apercu Mono', var(--font-brand-mono), ui-monospace, monospace;
+
+  --ease-brand: cubic-bezier(0.65, 0.05, 0, 1);
+
+  --animate-marquee: marquee 40s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
 }
 
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
-  body { @apply bg-blanc text-noir font-sans antialiased; }
+  body { @apply bg-noir text-ivoire font-sans antialiased; }
   ::selection { @apply bg-citron text-noir; }
-  :focus-visible { @apply outline-3 outline-offset-2 outline-bleu; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-citron; }
 }
 
-/* Colorblock: square, flat, high-contrast components */
-@utility btn { @apply inline-flex min-h-12 items-center justify-center gap-2 px-6 font-bold uppercase tracking-wide transition-colors disabled:opacity-60; }
-@utility btn-primary { @apply btn bg-noir text-blanc hover:bg-bleu; }
-@utility btn-citron { @apply btn bg-citron text-noir hover:bg-noir hover:text-citron; }
-@utility btn-outline { @apply btn border-2 border-noir bg-blanc text-noir hover:bg-citron; }
-@utility field { @apply min-h-12 w-full border-2 border-noir bg-blanc px-4 text-base placeholder:text-gris focus:border-bleu focus:outline-none; }
-@utility card { @apply border-2 border-noir bg-blanc p-6; }
-@utility kicker { @apply font-mono text-sm uppercase tracking-[0.2em]; }
-@utility title-xl { @apply text-4xl leading-[1.05] font-bold uppercase sm:text-6xl; }
+/* Buttons: rounded, with a vertical text-roll on hover */
+@utility btn {
+  @apply relative inline-flex min-h-12 items-center justify-center overflow-hidden rounded-lg px-6 text-sm font-bold uppercase tracking-wide transition-colors duration-500 ease-brand disabled:opacity-60;
+}
+@utility btn-primary { @apply btn bg-citron text-noir hover:bg-ivoire; }
+@utility btn-ghost { @apply btn border border-ivoire/40 text-ivoire hover:border-citron hover:text-citron; }
+@utility btn-dark { @apply btn bg-noir text-citron hover:bg-carbone; }
+
+@utility field {
+  @apply min-h-12 w-full rounded-lg border border-ivoire/25 bg-carbone px-4 text-base text-ivoire placeholder:text-gris focus:border-citron focus:outline-none;
+}
+@utility card { @apply rounded-3xl border border-ivoire/15 bg-nuit p-6; }
+@utility kicker { @apply font-mono text-xs uppercase tracking-[0.2em]; }
+
+/* Display type: huge, tight, uppercase; .accent = Light italic in citron */
+@utility display {
+  @apply font-bold uppercase leading-[0.9] tracking-[-0.03em];
+}
+@utility accent { @apply font-light italic text-citron; }
+
+/* Curved section edges */
+@utility curve-top { border-top-left-radius: 50% 4rem; border-top-right-radius: 50% 4rem; }
+@utility curve-bottom { border-bottom-left-radius: 50% 4rem; border-bottom-right-radius: 50% 4rem; }
+
+/* Scroll reveal (driven by <Reveal>, never hides content without JS) */
+[data-reveal='hidden'] { opacity: 0; transform: translateY(2.5rem); }
+[data-reveal='shown'] { opacity: 1; transform: none; transition: opacity 0.9s var(--ease-brand), transform 0.9s var(--ease-brand); }
+
+.btn-mask { display: inline-block; overflow: hidden; height: 1.25em; line-height: 1.25em; }
+.btn-roll { display: inline-block; transition: transform 0.5s var(--ease-brand); text-shadow: 0 1.6em currentColor; }
+.btn:hover .btn-roll { transform: translateY(-1.6em); }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

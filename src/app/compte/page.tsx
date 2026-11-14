@@ -9,8 +9,8 @@ const ROLE_LABEL = { USER: 'Membre', CREATOR: 'Créatrice', MODERATOR: 'Modérat
 export default async function ComptePage() {
   const user = await requireUser('/compte')
   return (
-    <section className="mx-auto grid max-w-6xl gap-6 px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold uppercase">Mon compte</h1>
+    <section className="mx-auto grid max-w-6xl gap-6 px-4 pt-32 pb-16 sm:px-6">
+      <h1 className="display text-4xl sm:text-5xl">Mon compte</h1>
       <div className="card grid gap-2">
         <p>
           <span className="text-gris">E-mail :</span> {user.email}
@@ -20,7 +20,7 @@ export default async function ComptePage() {
         </p>
       </div>
       <form action={logout}>
-        <button className="btn-outline">Se déconnecter</button>
+        <button className="btn-ghost">Se déconnecter</button>
       </form>
     </section>
   )

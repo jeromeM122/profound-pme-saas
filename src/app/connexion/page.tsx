@@ -28,16 +28,16 @@ export default async function ConnexionPage({ searchParams }: Props) {
   const providers = enabledProviders()
 
   return (
-    <section className="mx-auto grid max-w-md gap-6 px-4 py-12">
+    <section className="mx-auto grid max-w-md gap-6 px-4 pt-32 pb-16">
       <div className="grid justify-items-center gap-3 text-center">
         <p className="kicker">Bienvenue</p>
-        <h1 className="text-3xl font-bold uppercase">Rejoins la communauté</h1>
-        <Wave name="curl" width={160} />
+        <h1 className="display text-4xl sm:text-5xl">Rejoins la communauté</h1>
+        <Wave name="curl" width={160} className="text-citron" />
         <p className="text-gris">Un clic, pas de mot de passe.</p>
       </div>
 
       {error && (
-        <p role="alert" className="border-2 border-noir bg-citron px-4 py-3 text-sm font-bold">
+        <p role="alert" className="rounded-lg bg-citron px-4 py-3 text-sm font-bold text-noir">
           {error}
         </p>
       )}
@@ -52,7 +52,7 @@ export default async function ConnexionPage({ searchParams }: Props) {
               </button>
             )}
             {providers.google && (
-              <button name="provider" value="google" className="btn-outline">
+              <button name="provider" value="google" className="btn-ghost">
                 Continuer avec Google
               </button>
             )}
@@ -63,7 +63,7 @@ export default async function ConnexionPage({ searchParams }: Props) {
           <>
             {(providers.google || providers.apple) && (
               <div className="flex items-center gap-3 text-xs text-gris" aria-hidden>
-                <span className="h-0.5 flex-1 bg-noir" /> ou <span className="h-0.5 flex-1 bg-noir" />
+                <span className="h-px flex-1 bg-ivoire/20" /> ou <span className="h-px flex-1 bg-ivoire/20" />
               </div>
             )}
             <form action={requestMagicLink} className="grid gap-3">

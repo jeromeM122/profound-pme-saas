@@ -24,7 +24,7 @@ Appliquée d'après la *charte graphique de tresser.fr* :
 - **Couleurs** : jaune citron `#E8F800`, bleu `#3366FF`, noir `#000000` + teintes d'applat lavande `#E4E8FF` et menthe `#E2FAE1`. Le citron n'est jamais utilisé comme couleur de texte sur blanc (contraste).
 - **Typographie** : Apercu / Apercu Mono. Police commerciale (licence web requise) : en attendant, substituts libres auto-hébergés DM Sans / DM Mono. Pour basculer, déposer les `.woff2` Apercu et modifier `src/app/fonts.ts`.
 - **Éléments graphiques** : boucle et vagues extraites de la charte (`<Wave name="curl|tight|wave|swell">`).
-- **Univers** : colorblock, aplats francs, angles droits, accroches de la charte (« Ma texture, ma couronne. »…).
+- **Univers** : thème sombre « night drive » (fond noir, accent citron, panneaux citron/bleu), titres géants en capitales qui mêlent Bold et Light italique citron, cartes arrondies à onglet, transitions courbes, bandeau défilant, révélations au scroll (respecte `prefers-reduced-motion`), accroches de la charte.
 
 ## Sécurité (socle)
 
