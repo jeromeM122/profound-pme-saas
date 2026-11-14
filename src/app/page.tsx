@@ -29,10 +29,10 @@ const TEXTURES: { code: string; label: string; wave: WaveName }[] = [
 
 /** Community routines published on tresser.fr (photos reused from the brand's own articles). */
 const ROUTINES = [
-  { name: 'Cindy', title: 'Ses essentiels pour cheveux crépus', img: cindyImg, alt: 'Cindy, cheveux crépus relevés en chignon, lunettes de soleil', href: 'https://tresser.fr/blogs/routines-capillaires/cindy' },
-  { name: 'Joanna', title: 'Une routine multitexture', img: joannaImg, alt: 'Joanna, cheveux bouclés volumineux, assise en terrasse', href: 'https://tresser.fr/blogs/routines-capillaires/routine-capillaire-multitexture-joanna' },
-  { name: 'Lindsay', title: 'Routine minimaliste pour locks', img: lindsayImg, alt: 'Locks de Lindsay vues de dos', href: 'https://tresser.fr/blogs/routines-capillaires/soin-locks-lindsay' },
-  { name: 'Gabou', title: 'Cheveux frisés et bouclés', img: gabouImg, alt: 'Gabou, cheveux frisés courts, lunettes teintées', href: 'https://tresser.fr/blogs/routines-capillaires/cheveux-boucles-frises-gabou' },
+  { name: 'Cindy', title: 'Ses essentiels pour cheveux crépus', img: cindyImg, alt: 'Cindy, cheveux crépus relevés en chignon, lunettes de soleil', href: '/routines/cindy' },
+  { name: 'Joanna', title: 'Une routine multitexture', img: joannaImg, alt: 'Joanna, cheveux bouclés volumineux, assise en terrasse', href: '/routines/routine-capillaire-multitexture-joanna' },
+  { name: 'Lindsay', title: 'Routine minimaliste pour locks', img: lindsayImg, alt: 'Locks de Lindsay vues de dos', href: '/routines/soin-locks-lindsay' },
+  { name: 'Gabou', title: 'Cheveux frisés et bouclés', img: gabouImg, alt: 'Gabou, cheveux frisés courts, lunettes teintées', href: '/routines/cheveux-boucles-frises-gabou' },
 ] as const
 
 const RITUAL = [
@@ -148,14 +148,14 @@ export default function Home() {
               Les routines <span className="accent">de la communauté</span>
             </h2>
           </div>
-          <a href="https://tresser.fr/blogs/routines-capillaires" target="_blank" rel="noopener noreferrer" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
+          <Link href="/routines" className="kicker border-b border-encre/40 pb-1 transition-colors hover:border-or hover:text-or">
             Toutes les routines
-          </a>
+          </Link>
         </Reveal>
         <ul className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
           {ROUTINES.map((r) => (
             <li key={r.name}>
-              <a href={r.href} target="_blank" rel="noopener noreferrer" className="group grid gap-4">
+              <Link href={r.href as '/routines'} className="group grid gap-4">
                 <div className="overflow-hidden bg-sable">
                   <Image
                     src={r.img}
@@ -168,9 +168,9 @@ export default function Home() {
                 <div className="grid gap-1">
                   <p className="kicker text-[0.62rem] text-or">{r.name}</p>
                   <p className="text-lg leading-snug">{r.title}</p>
-                  <p className="kicker mt-1 text-[0.6rem] text-taupe transition-colors group-hover:text-encre">Lire sa routine →</p>
+                  <p className="kicker mt-1 text-[0.6rem] text-taupe transition-colors group-hover:text-encre">Voir sa routine →</p>
                 </div>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

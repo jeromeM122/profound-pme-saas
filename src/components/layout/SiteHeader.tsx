@@ -19,6 +19,9 @@ export async function SiteHeader() {
         {/* py-5 ≥ « 1e » clear space around the wordmark */}
         <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 py-5 sm:px-8">
           <nav aria-label="Découvrir" className="hidden items-center gap-8 md:flex">
+            <Link href="/routines" className={navLink}>
+              Routines
+            </Link>
             <Link href="/diagnostic" className={navLink}>
               Diagnostic
             </Link>
@@ -30,6 +33,9 @@ export async function SiteHeader() {
             <Logo height={22} />
           </Link>
           <nav aria-label="Compte" className="col-start-3 flex items-center justify-end gap-6">
+            <Link href="/routines" className={`${navLink} md:hidden`}>
+              Routines
+            </Link>
             <Link href={signedIn ? '/compte' : '/connexion'} className={navLink}>
               {signedIn ? 'Mon compte' : 'Connexion'}
             </Link>

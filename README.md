@@ -48,5 +48,6 @@ Pourquoi `SameSite=Lax` et pas `Strict` : une visiteuse arrivant depuis un lien 
 
 1. ✅ Socle, sécurité & authentification
 2. ✅ Quiz « Hair Diagnostic Engine » & profil social (`/diagnostic`, `/jumelles`, `/@pseudo`, `/compte`)
-3. Catalogue hybride e-commerce / affiliation (`/go/[offerId]`, Stripe)
-4. Vidéos sociales (façades, modération, filtres par texture)
+3. ✅ Routines de la communauté (`/routines`, `/routines/[slug]`) — 20 routines reprises de tresser.fr, personnalisées selon le diagnostic
+4. Catalogue hybride e-commerce / affiliation (`/go/[offerId]`, Stripe)
+5. Vidéos sociales (façades, modération, filtres par texture)

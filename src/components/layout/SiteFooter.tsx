@@ -22,6 +22,7 @@ export function SiteFooter() {
         <div className="mt-12 grid gap-10 text-center sm:grid-cols-3 sm:text-left">
           <div className={col}>
             <p className="kicker text-or-clair">Découvrir</p>
+            <Link href="/routines" className={link}>Routines capillaires</Link>
             <Link href="/diagnostic" className={link}>Diagnostic capillaire</Link>
             <Link href="/jumelles" className={link}>Jumelles capillaires</Link>
           </div>
