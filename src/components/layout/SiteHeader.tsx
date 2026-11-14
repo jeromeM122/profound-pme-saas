@@ -22,6 +22,9 @@ export async function SiteHeader() {
             <Link href="/routines" className={navLink}>
               Routines
             </Link>
+            <Link href="/produits" className={navLink}>
+              Produits
+            </Link>
             <Link href="/diagnostic" className={navLink}>
               Diagnostic
             </Link>

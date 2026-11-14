@@ -23,6 +23,7 @@ export function SiteFooter() {
           <div className={col}>
             <p className="kicker text-or-clair">Découvrir</p>
             <Link href="/routines" className={link}>Routines capillaires</Link>
+            <Link href="/produits" className={link}>Produits</Link>
             <Link href="/diagnostic" className={link}>Diagnostic capillaire</Link>
             <Link href="/jumelles" className={link}>Jumelles capillaires</Link>
           </div>

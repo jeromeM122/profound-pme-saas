@@ -8,7 +8,8 @@ import { HeroPicture } from '@/components/routines/HeroPicture'
 import { MatchBadge } from '@/components/routines/MatchBadge'
 import { RoutineCard } from '@/components/routines/RoutineCard'
 import { ButtonLabel } from '@/components/ui/ButtonLabel'
-import { CATEGORY_LABEL, CATEGORY_SLUG, getRoutine, matchRoutine, rankRoutines, ROUTINES, routineBrands } from '@/content/routines'
+import { productForStep } from '@/content/catalog'
+import { CATEGORY_LABEL, CATEGORY_SLUG, getRoutine, matchRoutine, rankRoutines, ROUTINES } from '@/content/routines'
 import { getVisitorProfile } from '@/server/hair/visitor-profile'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -29,8 +30,10 @@ export default async function RoutinePage({ params }: Props) {
   if (!r) notFound()
   const profile = await getVisitorProfile()
   const match = profile ? matchRoutine(r, profile) : null
-  const buyable = r.steps.filter((s) => s.buy)
-  const brands = routineBrands(r)
+  const from = `/routines/${r.slug}`
+  const items = r.steps.map((s) => ({ step: s, product: productForStep(r.slug, s.n) }))
+  const buyable = items.filter((i) => i.product?.offer)
+  const shops = [...new Set(buyable.map((i) => i.product!.offer!.merchantName))]
   const related = rankRoutines(
     profile,
     ROUTINES.filter((x) => x.slug !== r.slug && (profile ? true : x.categories.some((c) => r.categories.includes(c)))),
@@ -110,7 +113,7 @@ export default async function RoutinePage({ params }: Props) {
               Les produits de {r.name}
             </h2>
             <ol className="mt-6 grid gap-5">
-              {r.steps.map((s) => (
+              {items.map(({ step: s, product }) => (
                 <li key={s.n} className="grid grid-cols-[3.5rem_1fr] items-center gap-4">
                   {s.image ? (
                     <Image src={s.image.src} width={s.image.w} height={s.image.h} alt="" sizes="56px" className="aspect-square w-14 object-cover" />
@@ -119,18 +122,24 @@ export default async function RoutinePage({ params }: Props) {
                   )}
                   <div className="grid min-w-0 gap-0.5">
                     <p className="kicker text-[0.55rem] text-taupe">Étape {s.n}</p>
-                    <p className="truncate text-sm" title={s.name}>{s.name || s.brand}</p>
+                    {product ? (
+                      <Link href={`/produits/${product.slug}` as '/produits'} className="truncate text-sm hover:text-or" title={product.name}>
+                        {product.name}
+                      </Link>
+                    ) : (
+                      <p className="truncate text-sm">{s.name || s.brand}</p>
+                    )}
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-xs text-taupe">{s.brand}</p>
-                      <BuyButton step={s} slug={r.slug} variant="link" />
+                      <p className="truncate text-xs text-taupe">{product?.offer?.merchantName ?? s.name}</p>
+                      <BuyButton offer={product?.offer} from={from} variant="link" />
                     </div>
                   </div>
                 </li>
               ))}
             </ol>
-            {brands.length > 0 && (
+            {shops.length > 0 && (
               <p className="mt-6 border-t border-ligne pt-4 text-xs leading-relaxed text-taupe">
-                Achat direct sur les boutiques des marques : {brands.join(', ')}.
+                Achat sur : {shops.join(', ')}.
               </p>
             )}
           </div>
@@ -163,7 +172,7 @@ export default async function RoutinePage({ params }: Props) {
               </h2>
               <Wave name="tight" width={90} className="hidden text-or sm:block" />
             </div>
-            {r.steps.map((s, i) => (
+            {items.map(({ step: s, product }, i) => (
               <section key={s.n} aria-labelledby={`step-${s.n}`} className={`grid items-center gap-8 md:grid-cols-2 ${i % 2 ? 'md:[&>figure]:order-2' : ''}`}>
                 {s.image && (
                   <figure className="overflow-hidden bg-sable">
@@ -177,7 +186,14 @@ export default async function RoutinePage({ params }: Props) {
                   {s.text.map((t, j) => (
                     <p key={j} className="leading-relaxed text-encre/85">{t}</p>
                   ))}
-                  <BuyButton step={s} slug={r.slug} className="mt-2 w-fit" />
+                  <div className="mt-2 flex flex-wrap items-center gap-5">
+                    <BuyButton offer={product?.offer} from={from} className="w-fit" />
+                    {product && (
+                      <Link href={`/produits/${product.slug}` as '/produits'} className="kicker border-b border-encre/30 pb-1 text-[0.58rem] hover:border-or hover:text-or">
+                        Fiche produit
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </section>
             ))}

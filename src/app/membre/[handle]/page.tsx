@@ -109,13 +109,13 @@ export default async function MemberPage({ params }: Props) {
           <Wave name="tight" width={100} className="hidden text-or sm:block" />
         </div>
         {p.bathroom.length === 0 ? (
-          <p className="card text-taupe">{isOwner ? 'Ajoute bientôt les produits que tu utilises depuis le catalogue.' : 'Aucun produit partagé pour l’instant.'}</p>
+          <p className="card text-taupe">{isOwner ? 'Ajoute les produits que tu utilises depuis leur fiche produit.' : 'Aucun produit partagé pour l’instant.'}</p>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {p.bathroom.map((b) => (
               <li key={b.product.slug} className="card grid gap-2">
                 <p className="kicker text-taupe">{b.product.brand.name}</p>
-                <p className="text-lg font-normal">{b.product.name}</p>
+                <Link href={`/produits/${b.product.slug}` as '/produits'} className="text-lg hover:text-or">{b.product.name}</Link>
                 <p className="text-sm">
                   {STATUS_LABEL[b.status]}
                   {b.rating ? ` · ${'★'.repeat(b.rating)}${'☆'.repeat(5 - b.rating)}` : ''}

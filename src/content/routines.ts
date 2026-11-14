@@ -91,6 +91,11 @@ export type Match = { score: number; label: string }
  *  goals 25 × share of the visitor's goals the routine addresses (7 if the routine has no stated goal)
  */
 export function matchRoutine(r: RoutineData, p: Profile): Match {
+  return scoreFit(r, p)
+}
+
+/** Same heuristic for anything that declares textures / goals / porosity (routines, products). */
+export function scoreFit(r: { textures: HairTexture[]; goals: HairGoal[]; porosity: Porosity | null }, p: Profile): Match {
   let score = 0
   if (r.textures.length === 0) score += 30
   else if (r.textures.includes(p.texture)) score += 60
