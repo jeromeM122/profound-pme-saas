@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-cream: #faf6f1;
+  --color-sand: #f1e7dc;
+  --color-cocoa: #2b1d14;
+  --color-clay: #7a3e1d;
+  --color-clay-dark: #5e2e14;
+  --color-muted: #6b5a4e;
+  --color-line: #e4d6c7;
+  --color-honey: #d99a3e;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: ui-serif, Georgia, 'Times New Roman', serif;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-cream text-cocoa font-sans antialiased; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-clay; }
+}
+
+@utility btn { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 font-semibold transition-colors disabled:opacity-60; }
+@utility btn-primary { @apply btn bg-clay text-white hover:bg-clay-dark; }
+@utility btn-outline { @apply btn border border-line bg-white text-cocoa hover:bg-sand; }
+@utility field { @apply min-h-12 w-full rounded-2xl border border-line bg-white px-4 text-base placeholder:text-muted/70; }
+@utility card { @apply rounded-3xl border border-line bg-white p-6; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

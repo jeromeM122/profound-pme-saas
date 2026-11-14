@@ -1,0 +1,447 @@
+// Tresser — Hair-Social Commerce
+// Conventions:
+//  - Every user-provided free text is stored as plain text and rendered escaped (never as HTML).
+//  - URLs from users are never stored as-is: we store parsed identifiers and rebuild canonical URLs server-side.
+//  - No raw IP addresses are stored (HMAC hashes only).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  CREATOR
+  MODERATOR
+  ADMIN
+}
+
+enum HairTexture {
+  T1A
+  T1B
+  T1C
+  T2A
+  T2B
+  T2C
+  T3A
+  T3B
+  T3C
+  T4A
+  T4B
+  T4C
+}
+
+enum Porosity {
+  LOW
+  MEDIUM
+  HIGH
+  UNKNOWN
+}
+
+/// Cosmetic categories only — no medical conditions (GDPR art. 9).
+enum ScalpType {
+  DRY
+  BALANCED
+  OILY
+  SENSITIVE
+}
+
+enum HairGoal {
+  HYDRATION
+  GROWTH
+  DEFINITION
+  REPAIR
+  VOLUME
+  PROTECTIVE_STYLES
+  SCALP_CARE
+}
+
+enum BudgetTier {
+  LOW
+  MID
+  PREMIUM
+}
+
+enum SocialPlatform {
+  TIKTOK
+  INSTAGRAM
+  YOUTUBE
+}
+
+enum Moderation {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum BathroomStatus {
+  USING
+  TRIED
+  WISHLIST
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+enum ConversionState {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+}
+
+// ─── Identity (Auth.js) ─────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  /// Public @handle, lowercase, ^[a-z0-9_.]{3,30}$ (enforced by Zod)
+  handle        String?   @unique
+  name          String?   @db.VarChar(60)
+  image         String?
+  /// Plain text, rendered escaped
+  bio           String?   @db.VarChar(280)
+  role          Role      @default(USER)
+  /// Public profile is an explicit opt-in
+  isPublic      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  /// Soft delete; a scheduled job purges personal data
+  deletedAt     DateTime?
+
+  accounts     Account[]
+  sessions     Session[]
+  hairProfile  HairProfile?
+  socialLinks  SocialLink[]
+  bathroom     BathroomItem[]
+  following    Follow[]       @relation("follower")
+  followers    Follow[]       @relation("following")
+  videosPosted SocialVideo[]  @relation("submitter")
+  clicks       ClickEvent[]   @relation("clicker")
+  attributed   ClickEvent[]   @relation("creator")
+  conversions  Conversion[]
+  orders       Order[]
+}
+
+/// OAuth tokens are intentionally NOT persisted (identity only — least privilege).
+/// The nullable token columns exist only for Auth.js adapter compatibility.
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Auth.js stores magic-link tokens hashed (sha256 + secret).
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Hair diagnostic ────────────────────────────────────────────────────────
+
+model HairProfile {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  texture     HairTexture
+  porosity    Porosity
+  scalp       ScalpType
+  goals       HairGoal[]
+  budget      BudgetTier
+  /// "T3B:HIGH" — index for "hair twins"
+  twinKey     String
+  quizVersion Int
+  badgePublic Boolean     @default(false)
+  /// Explicit, timestamped consent to process hair data
+  consentAt   DateTime
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([twinKey])
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followingId])
+}
+
+model SocialLink {
+  id          String         @id @default(cuid())
+  userId      String
+  platform    SocialPlatform
+  /// Only the handle is stored; the URL is rebuilt server-side
+  handle      String         @db.VarChar(64)
+  displayName String?        @db.VarChar(100)
+  /// Re-hosted on our CDN, never hotlinked
+  avatarUrl   String?
+  fetchedAt   DateTime?
+  createdAt   DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+}
+
+// ─── Catalogue ──────────────────────────────────────────────────────────────
+
+model Brand {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  products Product[]
+}
+
+model Product {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  name             String
+  brandId          String
+  description      String
+  /// INCI list
+  ingredients      String?
+  images           String[]
+  status           ProductStatus @default(DRAFT)
+  textures         HairTexture[]
+  porosities       Porosity[]
+  goals            HairGoal[]
+  /// Direct sale — null means not sold directly by Tresser
+  directPriceCents Int?
+  stock            Int           @default(0)
+  sku              String?       @unique
+  stripePriceId    String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  brand      Brand            @relation(fields: [brandId], references: [id])
+  offers     AffiliateOffer[]
+  videos     SocialVideo[]
+  bathroom   BathroomItem[]
+  orderItems OrderItem[]
+
+  @@index([status])
+  @@index([brandId])
+}
+
+/// "Ma Salle de Bain"
+model BathroomItem {
+  userId      String
+  productId   String
+  status      BathroomStatus
+  /// 1..5 (CHECK constraint in migration)
+  rating      Int?
+  review      String?        @db.VarChar(1000)
+  recommended Boolean        @default(false)
+  moderation  Moderation     @default(APPROVED)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
+  @@index([productId])
+}
+
+// ─── Affiliation ────────────────────────────────────────────────────────────
+
+model Merchant {
+  id           String           @id @default(cuid())
+  slug         String           @unique
+  name         String
+  /// Anti open-redirect: final destination host must be in this list
+  allowedHosts String[]
+  /// e.g. "ascsubtag" (Amazon), "clickref" (Awin)
+  subIdParam   String
+  deliveryNote String?
+  active       Boolean          @default(true)
+  offers       AffiliateOffer[]
+}
+
+model AffiliateOffer {
+  id         String    @id @default(cuid())
+  productId  String
+  merchantId String
+  /// Admin-entered only
+  targetUrl  String
+  priceCents Int?
+  currency   String    @default("EUR") @db.Char(3)
+  inStock    Boolean   @default(true)
+  /// Displayed as "prix au …" (mandatory for Amazon)
+  priceAt    DateTime?
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  product  Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  merchant Merchant     @relation(fields: [merchantId], references: [id])
+  clicks   ClickEvent[]
+
+  @@unique([productId, merchantId])
+  @@index([merchantId])
+}
+
+model ClickEvent {
+  /// Also used as the SubID sent to the merchant
+  id         String   @id @default(cuid())
+  offerId    String
+  userId     String?
+  creatorId  String?
+  videoId    String?
+  sourcePath String   @db.VarChar(200)
+  /// HMAC(IP, secret) — never the raw IP
+  ipHash     String
+  uaBot      Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  offer      AffiliateOffer @relation(fields: [offerId], references: [id])
+  user       User?          @relation("clicker", fields: [userId], references: [id], onDelete: SetNull)
+  creator    User?          @relation("creator", fields: [creatorId], references: [id], onDelete: SetNull)
+  conversion Conversion?
+
+  @@index([offerId, createdAt])
+  @@index([creatorId, createdAt])
+}
+
+/// Fed by signed network postbacks / reports
+model Conversion {
+  id              String          @id @default(cuid())
+  clickId         String?         @unique
+  creatorId       String?
+  externalRef     String
+  merchantSlug    String
+  amountCents     Int
+  commissionCents Int
+  state           ConversionState @default(PENDING)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  click   ClickEvent? @relation(fields: [clickId], references: [id])
+  creator User?       @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+
+  @@unique([merchantSlug, externalRef])
+  @@index([creatorId])
+}
+
+// ─── Social videos ──────────────────────────────────────────────────────────
+
+model SocialVideo {
+  id           String         @id @default(cuid())
+  platform     SocialPlatform
+  /// Extracted by strict regex; the submitted URL is never stored
+  externalId   String         @db.VarChar(64)
+  authorHandle String?        @db.VarChar(64)
+  /// Copy on our CDN
+  thumbnailUrl String?
+  title        String?        @db.VarChar(200)
+  texture      HairTexture?
+  porosity     Porosity?
+  productId    String?
+  submitterId  String
+  moderation   Moderation     @default(PENDING)
+  createdAt    DateTime       @default(now())
+
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  submitter User     @relation("submitter", fields: [submitterId], references: [id], onDelete: Cascade)
+
+  @@unique([platform, externalId, productId])
+  @@index([productId, moderation, texture])
+  @@index([submitterId])
+}
+
+// ─── Direct sales ───────────────────────────────────────────────────────────
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String?
+  email           String
+  stripeSessionId String      @unique
+  status          OrderStatus @default(PENDING)
+  totalCents      Int
+  creatorId       String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user  User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  orderId   String
+  productId String
+  qty       Int
+  /// Price frozen server-side, never trusted from the client
+  unitCents Int
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@id([orderId, productId])
+}
+
+// ─── Audit ──────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  action    String
+  target    String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([target])
+}
