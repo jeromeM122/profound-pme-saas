@@ -28,7 +28,8 @@ const schema = z
       if (!env.APP_URL.startsWith('https://')) {
         ctx.addIssue({ code: 'custom', path: ['APP_URL'], message: 'APP_URL must be https in production' })
       }
-      if (!env.UPSTASH_REDIS_REST_URL || !env.UPSTASH_REDIS_REST_TOKEN) {
+      // Private Vercel previews (behind Vercel Authentication) may use the in-memory limiter.
+      if (process.env.VERCEL_ENV !== 'preview' && (!env.UPSTASH_REDIS_REST_URL || !env.UPSTASH_REDIS_REST_TOKEN)) {
         ctx.addIssue({ code: 'custom', path: ['UPSTASH_REDIS_REST_URL'], message: 'A shared rate-limit store is required in production' })
       }
     }

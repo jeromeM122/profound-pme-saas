@@ -12,18 +12,25 @@ const direct = first('DATABASE_URL_UNPOOLED', 'POSTGRES_URL_NON_POOLING') ?? fir
 const redisUrl = first('UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL') ?? firstMatching(/_(UPSTASH_REDIS_REST_URL|KV_REST_API_URL)$/)
 const redisToken = first('UPSTASH_REDIS_REST_TOKEN', 'KV_REST_API_TOKEN') ?? firstMatching(/_(UPSTASH_REDIS_REST_TOKEN|KV_REST_API_TOKEN)$/)
 
+// On a private preview (behind Vercel Authentication), Redis and e-mail are optional:
+// rate limiting falls back to memory and sign-in is simply unavailable without e-mail.
+const isPreview = env.VERCEL_ENV === 'preview'
+
 const checks = [
-  ['Base de données (Neon)', Boolean(pooled), 'Storage → Neon → Connect, en cochant « Preview ».'],
-  ['Redis (Upstash)', Boolean(redisUrl && redisToken), 'Storage → Upstash (Redis) → Connect, en cochant « Preview ».'],
-  ['AUTH_SECRET', (env.AUTH_SECRET ?? '').length >= 32, 'Settings → Environment Variables (Preview) : 32 caractères minimum.'],
-  ['APP_HMAC_SECRET', (env.APP_HMAC_SECRET ?? '').length >= 32, 'Settings → Environment Variables (Preview) : 32 caractères minimum, différent de AUTH_SECRET.'],
-  ['EMAIL_SERVER', Boolean(env.EMAIL_SERVER), 'Settings → Environment Variables : smtps://resend:re_TACLE@smtp.resend.com:465'],
-  ['EMAIL_FROM', Boolean(env.EMAIL_FROM), 'Settings → Environment Variables : Tresser <onboarding@resend.dev>'],
+  ['Base de données (Neon)', Boolean(pooled), 'Storage → Create Database → Neon → Connect, en cochant « Preview ».', true],
+  ['AUTH_SECRET', (env.AUTH_SECRET ?? '').length >= 32, 'Settings → Environment Variables : 32 caractères minimum.', true],
+  ['APP_HMAC_SECRET', (env.APP_HMAC_SECRET ?? '').length >= 32, 'Settings → Environment Variables : 32 caractères minimum, différent de AUTH_SECRET.', true],
+  ['Redis (Upstash)', Boolean(redisUrl && redisToken), 'Storage → Upstash (Redis) → Connect.', !isPreview],
+  ['E-mails de connexion (EMAIL_SERVER + EMAIL_FROM)', Boolean(env.EMAIL_SERVER && env.EMAIL_FROM), 'Resend : EMAIL_SERVER=smtps://resend:re_TACLE@smtp.resend.com:465 et EMAIL_FROM=Tresser <onboarding@resend.dev>', !isPreview],
 ]
 
-console.log('\n=== Vérification de la configuration tresser.fr ===')
-for (const [name, ok, help] of checks) console.log(`${ok ? '✅' : '❌'} ${name}${ok ? '' : `\n     → ${help}`}`)
-const missing = checks.filter(([, ok]) => !ok)
+console.log(`\n=== Vérification de la configuration tresser.fr (${isPreview ? 'prévisualisation privée' : env.VERCEL_ENV ?? 'local'}) ===`)
+for (const [name, ok, help, required] of checks) {
+  const icon = ok ? '✅' : required ? '❌' : '⚠️ '
+  const note = ok ? '' : required ? `\n     → ${help}` : `  (optionnel en prévisualisation)\n     → ${help}`
+  console.log(`${icon} ${name}${note}`)
+}
+const missing = checks.filter(([, ok, , required]) => !ok && required)
 if (missing.length) {
   console.log(`\n${missing.length} réglage(s) manquant(s). Ajoute-les, puis Deployments → ⋯ → Redeploy.`)
   console.log('(Les variables doivent être cochées pour l’environnement « Preview ».)\n')

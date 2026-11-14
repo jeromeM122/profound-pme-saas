@@ -74,7 +74,7 @@ export function limiter(): Limiter {
   // Upstash via the Vercel Marketplace may expose KV_REST_API_* (or prefixed) names.
   const { url, token } = redisCredentials()
   if (url && token) singleton = createUpstashLimiter(url, token)
-  else if (process.env.NODE_ENV === 'production' && !isLocalhostUrl(appUrl())) throw new Error('Rate limiting requires Upstash Redis in production')
+  else if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV !== 'preview' && !isLocalhostUrl(appUrl())) throw new Error('Rate limiting requires Upstash Redis in production')
   else singleton = createMemoryLimiter()
   return singleton
 }
