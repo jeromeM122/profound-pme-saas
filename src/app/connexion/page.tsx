@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+import { Wave } from '@/components/brand/Wave'
 import { callbackUrlSchema } from '@/lib/validators/auth'
 import { auth, enabledProviders } from '@/server/auth'
 import { requestMagicLink, signInWithOAuth } from './actions'
@@ -27,14 +28,16 @@ export default async function ConnexionPage({ searchParams }: Props) {
   const providers = enabledProviders()
 
   return (
-    <section className="mx-auto grid max-w-md gap-6 pt-10">
-      <div className="grid gap-2 text-center">
-        <h1 className="font-display text-3xl font-bold">Rejoins Tresser</h1>
-        <p className="text-muted">Un clic, pas de mot de passe.</p>
+    <section className="mx-auto grid max-w-md gap-6 px-4 py-12">
+      <div className="grid justify-items-center gap-3 text-center">
+        <p className="kicker">Bienvenue</p>
+        <h1 className="text-3xl font-bold uppercase">Rejoins la communauté</h1>
+        <Wave name="curl" width={160} />
+        <p className="text-gris">Un clic, pas de mot de passe.</p>
       </div>
 
       {error && (
-        <p role="alert" className="rounded-2xl border border-clay/30 bg-clay/5 px-4 py-3 text-sm text-clay-dark">
+        <p role="alert" className="border-2 border-noir bg-citron px-4 py-3 text-sm font-bold">
           {error}
         </p>
       )}
@@ -44,7 +47,7 @@ export default async function ConnexionPage({ searchParams }: Props) {
           <form action={signInWithOAuth} className="grid gap-3">
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
             {providers.apple && (
-              <button name="provider" value="apple" className="btn bg-cocoa text-white hover:bg-black">
+              <button name="provider" value="apple" className="btn-primary">
                 Continuer avec Apple
               </button>
             )}
@@ -59,8 +62,8 @@ export default async function ConnexionPage({ searchParams }: Props) {
         {providers.email && (
           <>
             {(providers.google || providers.apple) && (
-              <div className="flex items-center gap-3 text-xs text-muted" aria-hidden>
-                <span className="h-px flex-1 bg-line" /> ou <span className="h-px flex-1 bg-line" />
+              <div className="flex items-center gap-3 text-xs text-gris" aria-hidden>
+                <span className="h-0.5 flex-1 bg-noir" /> ou <span className="h-0.5 flex-1 bg-noir" />
               </div>
             )}
             <form action={requestMagicLink} className="grid gap-3">
@@ -85,11 +88,11 @@ export default async function ConnexionPage({ searchParams }: Props) {
         )}
 
         {!providers.email && !providers.google && !providers.apple && (
-          <p className="text-sm text-muted">Aucune méthode de connexion n’est configurée.</p>
+          <p className="text-sm text-gris">Aucune méthode de connexion n’est configurée.</p>
         )}
       </div>
 
-      <p className="text-center text-xs text-muted">
+      <p className="text-center text-xs text-gris">
         En continuant, tu acceptes nos conditions d’utilisation et notre politique de confidentialité.
       </p>
     </section>

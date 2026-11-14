@@ -1,31 +1,38 @@
 import type { Metadata, Viewport } from 'next'
 import { headers } from 'next/headers'
+import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
+import { fontMono, fontSans } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
-  title: { default: 'Tresser — la communauté des cheveux texturés', template: '%s · Tresser' },
+  title: { default: 'tresser.fr — ma texture, ma couronne', template: '%s · tresser.fr' },
   description:
-    'Diagnostic capillaire, routines et produits recommandés par des profils capillaires comme le tien. Achète sur Tresser ou chez nos partenaires.',
-  openGraph: { type: 'website', locale: 'fr_FR', siteName: 'Tresser' },
+    'Un lieu pensé pour les textures, les boucles, les histoires qu’on porte sur la tête. Diagnostic capillaire, communauté, routines et produits testés par des cheveux comme les tiens.',
+  openGraph: { type: 'website', locale: 'fr_FR', siteName: 'tresser.fr' },
+  icons: { icon: '/brand/favicon.svg' },
 }
 
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#faf6f1' }
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#e8f800' }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Reading request headers opts every page into dynamic rendering, which the per-request CSP nonce requires.
   await headers()
   return (
-    <html lang="fr">
-      <body className="min-h-dvh">
-        <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2">
+    <html lang="fr" className={`${fontSans.variable} ${fontMono.variable}`}>
+      <body className="flex min-h-dvh flex-col">
+        <a
+          href="#contenu"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-citron focus:px-4 focus:py-2 focus:font-bold"
+        >
           Aller au contenu
         </a>
         <SiteHeader />
-        <main id="contenu" className="mx-auto w-full max-w-5xl px-4 pb-16 sm:px-6">
+        <main id="contenu" className="w-full flex-1">
           {children}
         </main>
+        <SiteFooter />
       </body>
     </html>
   )

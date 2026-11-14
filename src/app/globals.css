@@ -1,29 +1,47 @@
 @import 'tailwindcss';
 
+/*
+ * Charte graphique tresser.fr
+ *  Couleurs web : Jaune citron #E8F800 · Bleu #3366FF · Noir #000000 (+ blanc)
+ *  Teintes claires des applats (p.4) : lavande, menthe
+ *  Typo : Apercu (+ Apercu Mono)  — see src/app/fonts.ts
+ *  Univers : énergie, peps, dynamisme, colorblock.
+ *
+ * Accessibility rules (WCAG AA) derived from the palette:
+ *  - citron is a BACKGROUND colour only (never text on white): black on citron = 17:1
+ *  - white on bleu = 4.7:1 (OK for body text); black on bleu only for large/bold text
+ */
 @theme {
-  --color-cream: #faf6f1;
-  --color-sand: #f1e7dc;
-  --color-cocoa: #2b1d14;
-  --color-clay: #7a3e1d;
-  --color-clay-dark: #5e2e14;
-  --color-muted: #6b5a4e;
-  --color-line: #e4d6c7;
-  --color-honey: #d99a3e;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-display: ui-serif, Georgia, 'Times New Roman', serif;
+  --color-citron: #e8f800;
+  --color-bleu: #3366ff;
+  --color-bleu-fonce: #1f4fe0;
+  --color-noir: #000000;
+  --color-blanc: #ffffff;
+  --color-lavande: #e4e8ff;
+  --color-menthe: #e2fae1;
+  --color-gris: #555555;
+  --color-trait: #000000;
+
+  --font-sans: 'Apercu', var(--font-brand-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Apercu Mono', var(--font-brand-mono), ui-monospace, monospace;
 }
 
 @layer base {
   html { -webkit-text-size-adjust: 100%; }
-  body { @apply bg-cream text-cocoa font-sans antialiased; }
-  :focus-visible { @apply outline-2 outline-offset-2 outline-clay; }
+  body { @apply bg-blanc text-noir font-sans antialiased; }
+  ::selection { @apply bg-citron text-noir; }
+  :focus-visible { @apply outline-3 outline-offset-2 outline-bleu; }
 }
 
-@utility btn { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 font-semibold transition-colors disabled:opacity-60; }
-@utility btn-primary { @apply btn bg-clay text-white hover:bg-clay-dark; }
-@utility btn-outline { @apply btn border border-line bg-white text-cocoa hover:bg-sand; }
-@utility field { @apply min-h-12 w-full rounded-2xl border border-line bg-white px-4 text-base placeholder:text-muted/70; }
-@utility card { @apply rounded-3xl border border-line bg-white p-6; }
+/* Colorblock: square, flat, high-contrast components */
+@utility btn { @apply inline-flex min-h-12 items-center justify-center gap-2 px-6 font-bold uppercase tracking-wide transition-colors disabled:opacity-60; }
+@utility btn-primary { @apply btn bg-noir text-blanc hover:bg-bleu; }
+@utility btn-citron { @apply btn bg-citron text-noir hover:bg-noir hover:text-citron; }
+@utility btn-outline { @apply btn border-2 border-noir bg-blanc text-noir hover:bg-citron; }
+@utility field { @apply min-h-12 w-full border-2 border-noir bg-blanc px-4 text-base placeholder:text-gris focus:border-bleu focus:outline-none; }
+@utility card { @apply border-2 border-noir bg-blanc p-6; }
+@utility kicker { @apply font-mono text-sm uppercase tracking-[0.2em]; }
+@utility title-xl { @apply text-4xl leading-[1.05] font-bold uppercase sm:text-6xl; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
