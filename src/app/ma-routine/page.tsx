@@ -112,7 +112,7 @@ export default async function MaRoutinePage() {
             const isOwned = p ? owned.has(p.slug) : false
             return (
               <li key={s.type} className="grid gap-6 border border-ligne bg-perle p-5 sm:grid-cols-[auto_8rem_1fr] sm:p-7">
-                <span className="font-light text-or italic text-3xl">{String(i + 1).padStart(2, '0')}</span>
+                <span className="font-light text-taupe text-3xl">{String(i + 1).padStart(2, '0')}</span>
                 <div className="hidden sm:block">
                   {p?.image && <Image src={p.image.src} width={p.image.w} height={p.image.h} alt="" sizes="128px" className="aspect-square w-32 object-cover" />}
                 </div>
@@ -380,7 +380,7 @@ function Welcome() {
       <ol className="mx-auto grid max-w-6xl border-y border-ligne px-4 sm:px-8 md:grid-cols-4 md:divide-x md:divide-ligne">
         {steps.map((s) => (
           <li key={s.n} className="grid gap-3 px-4 py-10 text-center">
-            <span className="font-light text-or italic text-3xl">{s.n}</span>
+            <span className="font-light text-taupe text-3xl">{s.n}</span>
             <h2 className="kicker text-sm text-encre">{s.t}</h2>
             <p className="text-sm leading-relaxed text-taupe">{s.d}</p>
           </li>

@@ -14,7 +14,7 @@ export function BeforeAfter({ before, after }: { before: Shot; after: Shot }) {
         <img src={before.src} alt={`Avant — ${before.date}`} className="absolute inset-0 h-full w-full object-cover" />
         {/* eslint-disable-next-line @next/next/no-img-element -- private, auth-checked media route */}
         <img src={after.src} alt={`Après — ${after.date}`} className="absolute inset-0 h-full w-full object-cover" style={{ clipPath: `inset(0 0 0 ${pos}%)` }} />
-        <div aria-hidden className="pointer-events-none absolute inset-y-0 w-px bg-creme shadow-[0_0_0_1px_rgb(128_96_40/0.6)]" style={{ left: `${pos}%` }}>
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 w-px bg-creme shadow-[0_0_0_1px_rgb(0_0_0/0.4)]" style={{ left: `${pos}%` }}>
           <span className="absolute top-1/2 left-1/2 grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-or-clair bg-creme text-or">⇆</span>
         </div>
         <span className="kicker absolute top-3 left-3 bg-creme/90 px-2 py-1 text-[0.55rem]">Avant · {before.date}</span>

@@ -59,7 +59,7 @@ export function HairScanner({ available }: { available: boolean }) {
 
   if (!available) {
     return (
-      <div className="grid gap-4 rounded-3xl border border-ligne bg-perle p-8 text-center">
+      <div className="grid gap-4 border border-ligne bg-perle p-8 text-center">
         <p className="text-lg">Le scan photo arrive très bientôt.</p>
         <p className="text-taupe">En attendant, ton diagnostic en 6 questions donne le même résultat.</p>
         <Link href="/diagnostic" className="btn-primary mx-auto">Faire le diagnostic</Link>
@@ -71,7 +71,7 @@ export function HairScanner({ available }: { available: boolean }) {
     const t = result.texture ? TEXTURES[result.texture] : null
     return (
       <div className="grid gap-6">
-        <div className="relative overflow-hidden rounded-3xl bg-encre text-creme">
+        <div className="relative overflow-hidden bg-encre text-creme">
           {/* eslint-disable-next-line @next/next/no-img-element -- local object URL, never uploaded for display */}
           {preview && <img src={preview} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />}
           <div className="relative grid gap-3 p-8 text-center">
@@ -80,7 +80,7 @@ export function HairScanner({ available }: { available: boolean }) {
               <>
                 <p className="display text-7xl sm:text-8xl">{t.code}</p>
                 <p className="text-lg">{t.label}</p>
-                <p className="kicker mx-auto w-fit rounded-full border border-or-clair/60 px-3 py-1 text-[0.58rem] text-or-clair">{CONFIDENCE[result.confidence]}</p>
+                <p className="kicker mx-auto w-fit border border-or-clair/60 px-3 py-1 text-[0.58rem] text-or-clair">{CONFIDENCE[result.confidence]}</p>
               </>
             ) : (
               <p className="text-lg">On n’a pas pu lire ta texture sur cette photo.</p>
@@ -91,7 +91,7 @@ export function HairScanner({ available }: { available: boolean }) {
         {result.observations.length > 0 && (
           <ul className="flex flex-wrap gap-2" aria-label="Observations">
             {result.observations.map((o) => (
-              <li key={o} className="rounded-full border border-ligne bg-perle px-4 py-2 text-sm">{o}</li>
+              <li key={o} className="border border-ligne px-4 py-2 text-sm">{o}</li>
             ))}
           </ul>
         )}
@@ -120,7 +120,7 @@ export function HairScanner({ available }: { available: boolean }) {
 
   return (
     <div className="grid gap-6">
-      <label className={`relative grid aspect-[4/5] w-full cursor-pointer place-items-center overflow-hidden rounded-3xl border border-or-clair/70 bg-perle text-center ${pending ? 'pointer-events-none' : ''}`}>
+      <label className={`relative grid aspect-[4/5] w-full cursor-pointer place-items-center overflow-hidden border border-or-clair/70 bg-perle text-center ${pending ? 'pointer-events-none' : ''}`}>
         {preview ? (
           // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
           <img src={preview} alt="Ta photo" className="absolute inset-0 h-full w-full object-cover" />
@@ -134,7 +134,7 @@ export function HairScanner({ available }: { available: boolean }) {
           </span>
         )}
         {pending && (
-          <span aria-hidden className="absolute inset-x-0 top-0 h-1/3 animate-scan bg-gradient-to-b from-transparent via-or-clair/60 to-transparent" />
+          <span aria-hidden className="absolute inset-x-0 top-0 h-1/3 animate-scan bg-gradient-to-b from-transparent via-white/40 to-transparent" />
         )}
         <input
           type="file"

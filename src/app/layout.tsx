@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   icons: { icon: '/brand/favicon.svg' },
 }
 
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#f6f1e9' }
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#ffffff' }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Reading request headers opts every page into dynamic rendering, which the per-request CSP nonce requires.

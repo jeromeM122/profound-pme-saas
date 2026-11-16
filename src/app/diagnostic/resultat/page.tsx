@@ -74,7 +74,7 @@ export default async function ResultatPage() {
           <div className="grid gap-3">
             <p className="kicker">Jumelles capillaires</p>
             <p className="display text-5xl">
-              {twins} <span className="font-light italic">{twins > 1 ? 'profils' : 'profil'}</span>
+              {twins} <span className="font-light">{twins > 1 ? 'profils' : 'profil'}</span>
             </p>
             <p>
               {twins > 0

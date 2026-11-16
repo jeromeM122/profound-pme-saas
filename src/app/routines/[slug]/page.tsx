@@ -67,7 +67,7 @@ export default async function RoutinePage({ params }: Props) {
               )}
             </nav>
             <h1 className="display text-4xl sm:text-6xl">{r.title}</h1>
-            {r.quote && <p className="max-w-xl text-lg font-light text-creme/90 italic">« {r.quote} »</p>}
+            {r.quote && <p className="max-w-xl text-lg font-light text-creme/90">« {r.quote} »</p>}
           </div>
         </div>
       </section>
@@ -122,7 +122,7 @@ export default async function RoutinePage({ params }: Props) {
                   {s.image ? (
                     <Image src={s.image.src} width={s.image.w} height={s.image.h} alt="" sizes="56px" className="aspect-square w-14 object-cover" />
                   ) : (
-                    <span className="grid aspect-square w-14 place-items-center bg-sable font-light text-or italic">{s.n}</span>
+                    <span className="grid aspect-square w-14 place-items-center bg-sable font-light text-taupe">{s.n}</span>
                   )}
                   <div className="grid min-w-0 gap-0.5">
                     <p className="kicker text-[0.55rem] text-taupe">Étape {s.n}</p>
@@ -184,7 +184,7 @@ export default async function RoutinePage({ params }: Props) {
                   </figure>
                 )}
                 <div className="grid content-center gap-4">
-                  <p className="font-light text-or italic text-4xl">{String(s.n).padStart(2, '0')}</p>
+                  <p className="font-light text-taupe text-4xl">{String(s.n).padStart(2, '0')}</p>
                   <h3 id={`step-${s.n}`} className="text-2xl leading-snug">{s.name || s.brand}</h3>
                   {s.name && s.brand && <p className="kicker text-[0.6rem] text-taupe">{s.brand}</p>}
                   {s.text.map((t, j) => (

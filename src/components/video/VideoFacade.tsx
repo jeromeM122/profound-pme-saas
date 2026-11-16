@@ -43,7 +43,7 @@ export function VideoFacade({ video: v }: { video: FacadeVideo }) {
           <button
             type="button"
             onClick={() => setPlaying(true)}
-            className="group grid h-full w-full content-between bg-[radial-gradient(circle_at_30%_20%,#3a3128_0%,#1c1814_70%)] p-4 text-left text-creme"
+            className="group grid h-full w-full content-between bg-encre p-4 text-left text-creme"
             aria-label={`Lire la vidéo ${v.sourceLabel}${v.handle ? ` de @${v.handle}` : ''}`}
           >
             <span className="kicker text-[0.55rem] text-or-clair">{v.sourceLabel}</span>

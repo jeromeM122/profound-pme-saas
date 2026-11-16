@@ -91,7 +91,7 @@ export default async function MemberPage({ params }: Props) {
                 const url = canonicalSocialUrl(s.platform, s.handle)
                 return url ? (
                   <li key={s.platform}>
-                    <a href={url} target="_blank" rel="me noopener noreferrer nofollow ugc" className="inline-flex items-center gap-2 rounded-full border border-encre/20 px-4 py-2 text-sm hover:border-or hover:text-or">
+                    <a href={url} target="_blank" rel="me noopener noreferrer nofollow ugc" className="inline-flex items-center gap-2 border border-encre/20 px-4 py-2 text-sm hover:border-or hover:text-or">
                       <span className="font-normal">{SOCIAL_LABEL[s.platform]}</span>
                       <span className="font-mono text-taupe">@{s.handle}</span>
                     </a>

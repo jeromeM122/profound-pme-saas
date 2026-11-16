@@ -1,16 +1,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ScanIcon } from '@/components/app/Icons'
-import { Wave } from '@/components/brand/Wave'
-import { HairBadge } from '@/components/profile/HairBadge'
-import { MatchBadge } from '@/components/routines/MatchBadge'
 import { loadVideos, VideoGrid } from '@/components/video/VideoRail'
+import cindyImg from '@/assets/photos/cindy.webp'
+import gabouImg from '@/assets/photos/gabou.webp'
+import joannaImg from '@/assets/photos/joanna.webp'
 import laurenBannerImg from '@/assets/photos/lauren-banniere.webp'
 import tresserImg from '@/assets/photos/tresser.webp'
 import { PRODUCTS } from '@/content/catalog'
 import { plannedSteps, STEP_INFO, WEEK, weeklyRitual } from '@/content/regimen'
 import { CATEGORY_LABEL, CATEGORY_SLUG, rankRoutines, scoreFit, type RoutineCategory } from '@/content/routines'
-import { TEXTURES } from '@/lib/hair/options'
+import { POROSITY, TEXTURES } from '@/lib/hair/options'
 import { auth } from '@/server/auth'
 import { getVisitorProfile } from '@/server/hair/visitor-profile'
 
@@ -21,111 +20,107 @@ function todayIndex(): number {
 }
 
 const TODAY_COPY = {
-  wash: { title: 'C’est ton wash day', text: 'Toutes les étapes de ta routine, dans l’ordre.' },
-  refresh: { title: 'Jour de rafraîchissement', text: 'Une brume d’eau et ton soin sans rinçage pour réveiller tes boucles.' },
-  rest: { title: 'Jour de repos', text: 'Pas de manipulation : protège tes cheveux la nuit avec du satin.' },
+  wash: { title: 'Wash day', text: 'Toutes les étapes de ta routine, dans l’ordre.' },
+  refresh: { title: 'Rafraîchissement', text: 'Une brume d’eau et ton soin sans rinçage pour réveiller tes boucles.' },
+  rest: { title: 'Repos', text: 'Pas de manipulation : protège tes cheveux la nuit avec du satin.' },
 } as const
+
+const caption = 'text-[0.64rem] uppercase tracking-[0.16em]'
 
 export default async function Home() {
   const [profile, session] = await Promise.all([getVisitorProfile(), auth()])
-  const firstName = session?.user?.name?.split(' ')[0]
   const routines = rankRoutines(profile).slice(0, 10)
   const products = PRODUCTS.map((p) => ({ p, m: profile ? scoreFit({ textures: p.textures, goals: p.goals, porosity: null }, profile) : null }))
     .sort((a, b) => (b.m?.score ?? 0) - (a.m?.score ?? 0) || b.p.usages.length - a.p.usages.length)
-    .slice(0, 10)
+    .slice(0, 8)
   const videos = await loadVideos({ textures: profile ? [profile.texture] : undefined, limit: 4 })
-  const today = profile ? weeklyRitual(profile).plan[todayIndex()] : null
+  const ritual = profile ? weeklyRitual(profile) : null
+  const today = ritual ? ritual.plan[todayIndex()] : null
   const steps = profile ? plannedSteps(profile) : []
+  const suiviHref = session?.user ? '/ma-routine/suivi' : ('/connexion?callbackUrl=%2Fma-routine%2Fsuivi' as '/connexion')
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-10 px-4 pt-5 pb-14 sm:px-8 md:pt-10">
-      {/* GREETING */}
-      <header className="grid gap-1">
-        <p className="kicker text-[0.6rem] text-taupe">
-          {new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date())}
-        </p>
-        <h1 className="display text-3xl sm:text-5xl">
-          {firstName ? `Bonjour ${firstName}` : 'Bonjour'}
-          <span className="accent">{profile ? ', prête pour ta routine ?' : ', parlons cheveux'}</span>
-        </h1>
-      </header>
-
-      {/* PRIMARY CARD */}
-      {profile && today ? (
-        <section aria-labelledby="today" className="grid gap-5 overflow-hidden rounded-[2rem] bg-encre p-6 text-creme sm:grid-cols-[1fr_auto] sm:items-end sm:p-8">
-          <div className="grid gap-3">
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="kicker text-[0.6rem] text-or-clair">Aujourd’hui · {WEEK[todayIndex()]}</p>
-              <HairBadge texture={profile.texture} porosity={profile.porosity} goals={profile.goals} size="sm" />
-            </div>
-            <h2 id="today" className="display text-3xl sm:text-4xl">{TODAY_COPY[today.kind].title}</h2>
-            <p className="max-w-md text-creme/80">{TODAY_COPY[today.kind].text}</p>
-            {today.kind === 'wash' && (
-              <ol className="flex flex-wrap gap-2">
-                {steps.map((s, i) => (
-                  <li key={s.type} className="rounded-full border border-creme/25 px-3 py-1 text-xs">
-                    {i + 1}. {STEP_INFO[s.type].title}
-                  </li>
-                ))}
-              </ol>
+    <div className="grid">
+      {/* ── HERO: full-bleed diptych, text set in white over the photograph ── */}
+      <section aria-labelledby="hero" className="relative isolate grid h-[calc(100svh-3.5rem-var(--tabbar-h))] min-h-[32rem] grid-rows-[100%] overflow-hidden md:h-[calc(100svh-5rem)] md:grid-cols-2">
+        <Image src={tresserImg} alt="" priority placeholder="blur" sizes="(min-width: 768px) 50vw, 100vw" className="h-full min-h-0 w-full object-cover" />
+        <Image src={gabouImg} alt="" priority placeholder="blur" sizes="50vw" className="hidden h-full min-h-0 w-full object-cover md:block" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/50 via-black/15 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 grid justify-items-center gap-4 px-6 pb-10 text-center text-white md:pb-14">
+          <p className={caption}>{profile ? `Ton profil · ${TEXTURES[profile.texture].code} · ${POROSITY[profile.porosity].label}` : 'Scan capillaire'}</p>
+          <h1 id="hero" className="display text-4xl sm:text-6xl">{profile ? 'Ta routine t’attend' : 'Une photo, ta routine'}</h1>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+            {profile ? (
+              <>
+                <Link href="/ma-routine" className="link-cta">Ouvrir ma routine</Link>
+                <Link href="/scan" className="link-cta">Refaire le scan</Link>
+              </>
+            ) : (
+              <>
+                <Link href="/scan" className="link-cta">Scanner mes cheveux</Link>
+                <Link href="/diagnostic" className="link-cta">Répondre à 6 questions</Link>
+              </>
             )}
-            <ol className="mt-2 grid grid-cols-7 gap-1" aria-label="Ma semaine">
-              {weeklyRitual(profile).plan.map((d, i) => (
-                <li key={d.day} className={`grid justify-items-center gap-1 rounded-xl py-2 text-[0.6rem] ${i === todayIndex() ? 'bg-or text-creme' : d.kind === 'wash' ? 'bg-creme/15' : d.kind === 'refresh' ? 'bg-creme/8' : ''}`}>
-                  <span>{d.day}</span>
-                  <span aria-hidden className={`size-1.5 rounded-full ${d.kind === 'wash' ? 'bg-or-clair' : d.kind === 'refresh' ? 'bg-creme/60' : 'bg-transparent'}`} />
-                </li>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TODAY (personalised) or the house statement ── */}
+      {profile && today && ritual ? (
+        <section aria-labelledby="today" className="grid justify-items-center gap-6 px-6 py-20 text-center sm:py-28">
+          <p className={`${caption} text-taupe`}>Aujourd’hui · {WEEK[todayIndex()]}</p>
+          <h2 id="today" className="display text-3xl sm:text-5xl">{TODAY_COPY[today.kind].title}</h2>
+          <p className="max-w-md text-taupe">{TODAY_COPY[today.kind].text}</p>
+          {today.kind === 'wash' && (
+            <ol className="flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+              {steps.map((s, i) => (
+                <li key={s.type}><span className="text-taupe">{String(i + 1).padStart(2, '0')}</span> {STEP_INFO[s.type].title}</li>
               ))}
             </ol>
-          </div>
-          <div className="grid gap-2">
-            <Link href="/ma-routine" className="btn bg-creme text-encre hover:bg-champagne">Ouvrir ma routine</Link>
-            <Link href={session?.user ? '/ma-routine/suivi' : ('/connexion?callbackUrl=%2Fma-routine%2Fsuivi' as '/connexion')} className="btn border border-creme/30 text-creme hover:bg-creme/10">
-              Ajouter une photo
-            </Link>
+          )}
+          <ol className="mt-2 grid w-full max-w-md grid-cols-7 border-y border-ligne" aria-label="Ma semaine">
+            {ritual.plan.map((d, i) => (
+              <li key={d.day} className={`grid justify-items-center gap-2 py-3 ${caption} ${i === todayIndex() ? 'bg-encre text-white' : d.kind === 'rest' ? 'text-taupe' : ''}`}>
+                <span>{d.day.slice(0, 1)}</span>
+                <span aria-hidden className={`h-px w-3 ${d.kind === 'wash' ? 'bg-current' : d.kind === 'refresh' ? 'bg-current opacity-40' : 'bg-transparent'}`} />
+              </li>
+            ))}
+          </ol>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+            <Link href="/ma-routine" className="link-cta">Voir les étapes</Link>
+            <Link href={suiviHref} className="link-cta">Ajouter une photo</Link>
           </div>
         </section>
       ) : (
-        <section aria-labelledby="scan" className="relative isolate overflow-hidden rounded-[2rem] bg-encre text-creme">
-          <Image src={tresserImg} alt="" priority placeholder="blur" sizes="(min-width: 768px) 60rem, 100vw" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-55" />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-encre via-encre/40 to-transparent" />
-          <div className="grid min-h-[26rem] content-end gap-4 p-6 sm:min-h-[30rem] sm:p-10">
-            <p className="kicker text-[0.6rem] text-or-clair">Nouveau · scan capillaire</p>
-            <h2 id="scan" className="display text-4xl sm:text-6xl">
-              Une photo.
-              <br />
-              <span className="accent">Ta routine.</span>
-            </h2>
-            <p className="max-w-md text-creme/85">L’IA lit ta texture sur une photo, tu réponds à 4 questions, et ta routine sur-mesure est prête.</p>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/scan" className="btn gap-3 bg-creme text-encre hover:bg-champagne">
-                <ScanIcon className="size-5" /> Scanner mes cheveux
-              </Link>
-              <Link href="/diagnostic" className="kicker border-b border-creme/50 pb-1 text-[0.6rem] text-creme hover:border-or-clair">
-                ou 6 questions
-              </Link>
-            </div>
-          </div>
+        <section className="grid justify-items-center gap-6 px-6 py-20 text-center sm:py-28">
+          <p className={`${caption} text-taupe`}>La maison</p>
+          <p className="display max-w-3xl text-2xl sm:text-4xl">
+            Chaque texture a sa routine. Nous la lisons sur une photo, puis nous la construisons avec toi, étape par étape.
+          </p>
         </section>
       )}
 
-      {/* STORIES — community routines */}
-      <section aria-labelledby="stories" className="grid gap-4">
-        <div className="flex items-end justify-between">
-          <h2 id="stories" className="text-xl">{profile ? 'Routines proches de toi' : 'Routines de la communauté'}</h2>
-          <Link href="/routines" className="kicker text-[0.58rem] text-or">Tout voir</Link>
+      {/* ── ROUTINES: tall portraits, numbered ── */}
+      <section aria-labelledby="routines" className="grid gap-8 pb-20 sm:pb-28">
+        <div className="flex items-baseline justify-between px-4 sm:px-10">
+          <h2 id="routines" className="display text-2xl sm:text-3xl">{profile ? 'Routines proches de toi' : 'Les routines'}</h2>
+          <Link href="/routines" className="link-cta">Tout voir</Link>
         </div>
-        <ul className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
-          {routines.map(({ routine: r, match }) => {
+        <ul className="flex snap-x gap-px overflow-x-auto [scrollbar-width:none]">
+          {routines.map(({ routine: r, match }, i) => {
             const img = r.heroMobile ?? r.hero
             return (
-              <li key={r.slug} className="snap-start">
-                <Link href={`/routines/${r.slug}` as '/routines'} className="grid w-20 justify-items-center gap-2 text-center">
-                  <span className={`rounded-full p-[3px] ${match && match.score >= 75 ? 'bg-gradient-to-tr from-or via-or-clair to-or' : 'bg-ligne'}`}>
-                    {img && <Image src={img.src} width={img.w} height={img.h} alt="" sizes="72px" className="size-[4.5rem] rounded-full border-2 border-creme object-cover" />}
-                  </span>
-                  <span className="w-full truncate text-xs">{r.name}</span>
-                  {match && <span className="kicker -mt-1 text-[0.5rem] text-or">{match.score} %</span>}
+              <li key={r.slug} className="w-[72vw] shrink-0 snap-start sm:w-[22rem]">
+                <Link href={`/routines/${r.slug}` as '/routines'} className="group grid gap-4">
+                  <div className="overflow-hidden bg-perle">
+                    {img && <Image src={img.src} width={img.w} height={img.h} alt="" sizes="(min-width: 640px) 22rem, 72vw" className="aspect-[3/4] w-full object-cover transition-transform duration-[1.6s] ease-brand group-hover:scale-[1.03]" />}
+                  </div>
+                  <div className="grid gap-1 px-4">
+                    <p className={`${caption} text-taupe`}>
+                      {String(i + 1).padStart(2, '0')} · {CATEGORY_LABEL[r.categories[0] ?? 'MULTI']}{match ? ` · ${match.score} %` : ''}
+                    </p>
+                    <p className="text-lg font-light">La routine de {r.name}</p>
+                  </div>
                 </Link>
               </li>
             )
@@ -133,64 +128,82 @@ export default async function Home() {
         </ul>
       </section>
 
-      {/* TEXTURE SHORTCUTS */}
-      <nav aria-label="Explorer par texture" className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
-        {(Object.keys(CATEGORY_LABEL) as RoutineCategory[]).map((c) => (
-          <Link key={c} href={`/routines?texture=${CATEGORY_SLUG[c]}` as '/routines'} className="whitespace-nowrap rounded-full border border-ligne bg-perle px-4 py-2.5 text-sm hover:border-or">
-            {CATEGORY_LABEL[c]}
+      {/* ── DIPTYCH: the two entry points ── */}
+      <section className="grid gap-px md:grid-cols-2">
+        {[
+          { href: '/scan' as const, img: cindyImg, kicker: 'Le scan', title: 'Lire ta texture', cta: 'Commencer' },
+          { href: '/ma-routine' as const, img: joannaImg, kicker: 'Ma routine', title: 'Tes produits, ton rituel', cta: 'Découvrir' },
+        ].map((b) => (
+          <Link key={b.href} href={b.href} className="group grid gap-6 pb-14 text-center">
+            <div className="overflow-hidden">
+              <Image src={b.img} alt="" placeholder="blur" sizes="(min-width: 768px) 50vw, 100vw" className="aspect-[4/5] w-full object-cover transition-transform duration-[1.6s] ease-brand group-hover:scale-[1.03]" />
+            </div>
+            <p className={`${caption} text-taupe`}>{b.kicker}</p>
+            <p className="display -mt-3 text-3xl">{b.title}</p>
+            <span className="link-cta justify-self-center">{b.cta}</span>
           </Link>
         ))}
-      </nav>
+      </section>
 
-      {/* PRODUCTS CAROUSEL */}
-      <section aria-labelledby="pour-toi" className="grid gap-4">
-        <div className="flex items-end justify-between">
-          <h2 id="pour-toi" className="text-xl">{profile ? `Pour tes cheveux ${TEXTURES[profile.texture].code}` : 'Les plus utilisés'}</h2>
-          <Link href="/produits" className="kicker text-[0.58rem] text-or">Tout voir</Link>
+      {/* ── PRODUCTS: grid on stone tiles ── */}
+      <section aria-labelledby="pour-toi" className="grid gap-8 py-20 sm:py-28">
+        <div className="grid justify-items-center gap-3 px-6 text-center">
+          <p className={`${caption} text-taupe`}>Sélection</p>
+          <h2 id="pour-toi" className="display text-3xl sm:text-4xl">{profile ? `Pour tes cheveux ${TEXTURES[profile.texture].code}` : 'Les plus utilisés'}</h2>
         </div>
-        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
+        <ul className="grid grid-cols-2 gap-px lg:grid-cols-4">
           {products.map(({ p, m }) => (
-            <li key={p.slug} className="w-40 shrink-0 snap-start sm:w-48">
-              <Link href={`/produits/${p.slug}` as '/produits'} className="grid gap-2">
-                <div className="relative overflow-hidden rounded-2xl bg-perle">
-                  {p.image && <Image src={p.image.src} width={p.image.w} height={p.image.h} alt={p.name} sizes="12rem" className="aspect-square w-full object-cover" />}
-                  {m && <div className="absolute top-2 left-2"><MatchBadge match={m} size="sm" /></div>}
+            <li key={p.slug}>
+              <Link href={`/produits/${p.slug}` as '/produits'} className="group grid gap-4 pb-8 text-center">
+                <div className="grid aspect-square place-items-center bg-perle p-8 sm:p-12">
+                  {p.image && <Image src={p.image.src} width={p.image.w} height={p.image.h} alt={p.name} sizes="(min-width: 1024px) 25vw, 50vw" className="max-h-full w-auto object-contain mix-blend-multiply transition-transform duration-[1.2s] ease-brand group-hover:scale-105" />}
                 </div>
-                <p className="kicker truncate text-[0.52rem] text-or">{p.brand ?? p.offer?.merchantName ?? 'Communauté'}</p>
-                <p className="line-clamp-2 text-sm leading-snug">{p.name}</p>
+                <div className="grid gap-1 px-3">
+                  <p className={`${caption} text-taupe`}>{p.brand ?? p.offer?.merchantName ?? 'Communauté'}{m ? ` · ${m.score} %` : ''}</p>
+                  <p className="line-clamp-2 text-sm">{p.name}</p>
+                </div>
               </Link>
             </li>
           ))}
         </ul>
+        <Link href="/produits" className="link-cta justify-self-center">Tous les produits</Link>
       </section>
 
-      {/* VIDEOS */}
+      {/* ── TEXTURES: an index, not chips ── */}
+      <nav aria-label="Explorer par texture" className="mx-4 grid border-t border-ligne sm:mx-10 sm:grid-cols-2 lg:grid-cols-3">
+        {(Object.keys(CATEGORY_LABEL) as RoutineCategory[]).map((c) => (
+          <Link key={c} href={`/routines?texture=${CATEGORY_SLUG[c]}` as '/routines'} className="group flex items-center justify-between border-b border-ligne py-5 sm:pr-8">
+            <span className="text-xl font-light">{CATEGORY_LABEL[c]}</span>
+            <span aria-hidden className="text-taupe transition-transform duration-500 group-hover:translate-x-1">→</span>
+          </Link>
+        ))}
+      </nav>
+
+      {/* ── VIDEOS ── */}
       {videos.length > 0 && (
-        <section aria-labelledby="videos" className="grid gap-4">
-          <h2 id="videos" className="text-xl">{profile ? `En vidéo, sur cheveux ${TEXTURES[profile.texture].code}` : 'En vidéo'}</h2>
+        <section aria-labelledby="videos" className="grid gap-8 px-4 pt-20 sm:px-10 sm:pt-28">
+          <h2 id="videos" className="display text-center text-3xl sm:text-4xl">{profile ? `En vidéo, sur cheveux ${TEXTURES[profile.texture].code}` : 'En vidéo'}</h2>
           <VideoGrid videos={videos} />
         </section>
       )}
 
-      {/* COMMUNITY / PROGRESS */}
-      <section className="grid gap-4 md:grid-cols-2">
-        <Link href={session?.user ? '/ma-routine/suivi' : ('/connexion?callbackUrl=%2Fma-routine%2Fsuivi' as '/connexion')} className="group relative isolate grid min-h-48 content-end overflow-hidden rounded-[2rem] p-6 text-encre">
-          <Image src={laurenBannerImg} alt="" placeholder="blur" sizes="(min-width: 768px) 30rem, 100vw" className="absolute inset-0 -z-10 h-full w-full object-cover object-[25%_center] transition-transform duration-[1.4s] group-hover:scale-105" />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent via-perle/40 to-perle/95" />
-          <div className="grid justify-items-end gap-1 text-right">
-            <p className="kicker text-[0.58rem] text-or">Mon suivi</p>
-            <p className="text-2xl">Avant / après</p>
-            <p className="max-w-[14rem] text-sm text-taupe">Une photo par wash day pour voir ta routine faire effet.</p>
+      {/* ── PROGRESS + COMMUNITY ── */}
+      <section className="grid gap-6 pt-20 sm:pt-28">
+        <Link href={suiviHref} className="group grid gap-6 text-center">
+          <div className="overflow-hidden">
+            <Image src={laurenBannerImg} alt="" placeholder="blur" sizes="100vw" className="aspect-[4/3] w-full object-cover object-[25%_center] transition-transform duration-[1.6s] ease-brand group-hover:scale-[1.02] sm:aspect-[8/3]" />
           </div>
+          <p className={`${caption} text-taupe`}>Mon suivi</p>
+          <p className="display -mt-3 text-3xl sm:text-4xl">Avant, après</p>
+          <p className="mx-auto max-w-sm px-6 text-sm text-taupe">Une photo par wash day pour voir ta routine faire effet.</p>
+          <span className="link-cta justify-self-center">Commencer mon suivi</span>
         </Link>
-        <Link href="/jumelles" className="grid min-h-48 content-between rounded-[2rem] border border-ligne bg-perle p-6 hover:border-or">
-          <Wave name="curl" width={150} className="text-or" />
-          <div className="grid gap-1">
-            <p className="kicker text-[0.58rem] text-or">Communauté</p>
-            <p className="text-2xl">Tes jumelles capillaires</p>
-            <p className="text-sm text-taupe">Même texture, même porosité : suis leurs routines et leurs salles de bain.</p>
-          </div>
-        </Link>
+      </section>
+
+      <section className="grid justify-items-center gap-5 px-6 py-24 text-center sm:py-32">
+        <p className={`${caption} text-taupe`}>Communauté</p>
+        <p className="display max-w-2xl text-3xl sm:text-4xl">Tes jumelles capillaires : même texture, même porosité.</p>
+        <Link href="/jumelles" className="link-cta">Les rencontrer</Link>
       </section>
     </div>
   )
