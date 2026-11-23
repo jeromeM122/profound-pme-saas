@@ -1,0 +1,34 @@
+{
+  "fps": 30,
+  "main": {
+    "duration": 39,
+    "scenes": [
+      { "id": "problem", "start": 0, "len": 5, "rate": 1, "offset": 0 },
+      { "id": "paste", "start": 5, "len": 5, "rate": 1, "offset": 0 },
+      { "id": "transform", "start": 10, "len": 7.5, "rate": 1, "offset": 0 },
+      { "id": "ruler", "start": 17.5, "len": 7.5, "rate": 1, "offset": 0 },
+      { "id": "trust", "start": 25, "len": 5, "rate": 1, "offset": 0 },
+      { "id": "result", "start": 30, "len": 5, "rate": 1, "offset": 0 },
+      { "id": "signature", "start": 35, "len": 4, "rate": 1, "offset": 0 }
+    ],
+    "music": { "pluck": 5, "drums": [10, 35], "riser": 17.5, "final": 35 }
+  },
+  "short": {
+    "duration": 15,
+    "scenes": [
+      { "id": "paste", "start": 0, "len": 3.6, "rate": 1.25, "offset": 0.6 },
+      { "id": "transform", "start": 3.6, "len": 4, "rate": 1.6, "offset": 0 },
+      { "id": "ruler", "start": 7.6, "len": 4, "rate": 1.5, "offset": 0.6 },
+      { "id": "signature", "start": 11.6, "len": 3.4, "rate": 1, "offset": 0 }
+    ],
+    "music": { "pluck": 0, "drums": [0, 11.6], "riser": 7.6, "final": 11.6 }
+  },
+  "cues": {
+    "paste": [[0, "whoosh"], [2.0, "pop"], [2.9, "tap"]],
+    "transform": [[0.4, "whoosh_soft"], [0.5, "tick"], [0.72, "tick"], [0.94, "tick"], [1.16, "tick"], [1.38, "tick"], [1.6, "tick"], [1.82, "tick"], [2.04, "tick"], [2.26, "tick"], [4.2, "whoosh_soft"]],
+    "ruler": [[1.0, "tap"], [1.95, "tick"], [2.2, "tick"], [2.45, "tick"], [2.7, "tick"], [2.95, "tick"], [3.2, "tick"], [3.45, "tick"], [3.7, "tick"], [3.95, "tick"], [4.2, "tick"], [4.45, "tick"], [4.7, "tick"], [4.95, "tick"], [5.2, "pop"]],
+    "trust": [[0.3, "pop"], [0.6, "pop"], [0.9, "pop"], [2.7, "tap"]],
+    "result": [[0, "whoosh_soft"]],
+    "signature": [[0, "whoosh"]]
+  }
+}

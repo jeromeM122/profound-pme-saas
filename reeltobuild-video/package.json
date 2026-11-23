@@ -1,0 +1,23 @@
+{
+  "name": "reeltobuild-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vidéos marketing ReelToBuild (Remotion)",
+  "scripts": {
+    "capture": "node scripts/capture.js",
+    "music": "python3 scripts/music.py",
+    "studio": "remotion studio src/index.ts",
+    "render": "node scripts/render.js"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.540",
+    "@remotion/renderer": "^4.0.540",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "remotion": "^4.0.540"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "typescript": "^5.9.3"
+  }
+}
