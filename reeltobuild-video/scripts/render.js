@@ -41,9 +41,12 @@ fs.mkdirSync(OUT, { recursive: true });
       let last = 0;
       await renderMedia({
         ...opts, composition: c, codec: 'h264', crf: 16, pixelFormat: 'yuv420p', audioCodec: 'aac', audioBitrate: '192k',
-        x264Preset: 'slow', concurrency: 4, output,
+        x264Preset: 'slow', concurrency: 4, imageFormat: 'png', colorSpace: 'bt709', outputLocation: output.replace('.mp4', '.tmp.mp4'),
         onProgress: ({ progress }) => { if (progress - last > 0.1) { last = progress; console.log(id, Math.round(progress * 100) + '%'); } },
       });
+      // Lecture web progressive (moov en tête), flux copiés sans ré-encodage.
+      require('child_process').execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', output.replace('.mp4', '.tmp.mp4'), '-c', 'copy', '-movflags', '+faststart', output]);
+      fs.unlinkSync(output.replace('.mp4', '.tmp.mp4'));
       console.log('video', output);
     }
   }

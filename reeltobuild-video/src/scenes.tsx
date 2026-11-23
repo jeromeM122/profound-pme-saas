@@ -538,7 +538,7 @@ export const TrustScene: React.FC<SceneProps> = ({ caption }) => {
               const p = ease(t, 0.3 + i * 0.3, 0.9 + i * 0.3);
               return (
                 <Card key={b.name} style={{ display: 'flex', alignItems: 'center', gap: 34, padding: '40px 44px', marginBottom: 28, opacity: p, transform: `translateX(${(1 - p) * 60}px)` }}>
-                  <div style={{ width: 300, flexShrink: 0 }}>
+                  <div style={{ width: 440, flexShrink: 0 }}>
                     <Img src={staticFile(`ui/${b.name}.png`)} style={{ height: (b.h / 72) * 104, display: 'block' }} />
                   </div>
                   <div style={{ fontFamily: BODY, fontSize: 36, fontWeight: 500, color: C.mute, lineHeight: 1.25, letterSpacing: '-0.01em' }}>{b.text}</div>
