@@ -38,7 +38,7 @@ for (const variant of ['masked', 'members']) {
     console.log(`\n${id} rendu en ${Math.round((Date.now() - t) / 1000)} s`);
     // passage en yuv420p plage TV / BT.709 (compatibilité Instagram, TikTok, YouTube)
     const video = path.join(TMP, `${id}_tv.mp4`);
-    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', silent, '-vf', 'scale=in_range=full:out_range=limited,format=yuv420p',
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', silent, '-vf', 'scale=in_range=full:out_range=limited:in_color_matrix=bt601:out_color_matrix=bt709,format=yuv420p',
       '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-profile:v', 'high', '-color_range', 'tv', '-colorspace', 'bt709',
       '-color_primaries', 'bt709', '-color_trc', 'bt709', '-movflags', '+faststart', video]);
     const base = path.join(dir, `${name}_${variant === 'masked' ? 'publiable' : 'membres'}`);
