@@ -1,0 +1,242 @@
+{
+  "home": {
+    "height": 4538,
+    "cards": [
+      {
+        "x": 24,
+        "y": 786.46875,
+        "w": 165,
+        "h": 350.71875,
+        "t": "Andréa"
+      },
+      {
+        "x": 24,
+        "y": 1151.1875,
+        "w": 165,
+        "h": 268.828125,
+        "t": "Chloé"
+      },
+      {
+        "x": 24,
+        "y": 1434.015625,
+        "w": 165,
+        "h": 267.796875,
+        "t": "Gabou"
+      },
+      {
+        "x": 24,
+        "y": 1715.8125,
+        "w": 165,
+        "h": 304.421875,
+        "t": "Jessica C"
+      },
+      {
+        "x": 24,
+        "y": 2034.234375,
+        "w": 165,
+        "h": 290.3125,
+        "t": "Joanna"
+      },
+      {
+        "x": 24,
+        "y": 2338.546875,
+        "w": 165,
+        "h": 213.0625,
+        "t": "Lauren"
+      },
+      {
+        "x": 24,
+        "y": 2785.859375,
+        "w": 165,
+        "h": 291.203125,
+        "t": "Michoune"
+      },
+      {
+        "x": 24,
+        "y": 3091.0625,
+        "w": 165,
+        "h": 241.515625,
+        "t": "Sélène"
+      },
+      {
+        "x": 201,
+        "y": 786.46875,
+        "w": 165,
+        "h": 361.6875,
+        "t": "Camille"
+      },
+      {
+        "x": 201,
+        "y": 1310.4375,
+        "w": 165,
+        "h": 226.875,
+        "t": "Cindy"
+      },
+      {
+        "x": 201,
+        "y": 1771.5625,
+        "w": 165,
+        "h": 323.171875,
+        "t": "Jessica"
+      },
+      {
+        "x": 201,
+        "y": 2332.734375,
+        "w": 165,
+        "h": 304.671875,
+        "t": "KJP"
+      },
+      {
+        "x": 201,
+        "y": 2651.40625,
+        "w": 165,
+        "h": 287.46875,
+        "t": "Lindsay"
+      },
+      {
+        "x": 201,
+        "y": 2952.875,
+        "w": 165,
+        "h": 325.953125,
+        "t": "NaÏza"
+      },
+      {
+        "x": 201,
+        "y": 3292.828125,
+        "w": 165,
+        "h": 268.125,
+        "t": "Yannick"
+      }
+    ],
+    "names": [
+      "Andréa",
+      "Chloé",
+      "Gabou",
+      "Jessica C",
+      "Joanna",
+      "Lauren",
+      "Michoune",
+      "Sélène",
+      "Camille",
+      "Cindy",
+      "Jessica",
+      "KJP",
+      "Lindsay",
+      "NaÏza",
+      "Yannick"
+    ],
+    "quizTile": {
+      "x": 201,
+      "y": 1162.15625,
+      "w": 165,
+      "h": 134.28125,
+      "t": "Quelle routine est faite pour toi ?"
+    },
+    "filters": {
+      "x": 8,
+      "y": 665.46875,
+      "w": 374,
+      "h": 113,
+      "t": "Crépus"
+    },
+    "share": {
+      "x": 8,
+      "y": 3620.953125,
+      "w": 374,
+      "h": 697.875,
+      "t": "TA ROUTINE PEUT INSPIRER QUELQU’UN."
+    },
+    "headerQuiz": {
+      "x": 293.125,
+      "y": 26,
+      "w": 72.875,
+      "h": 33.390625,
+      "t": "Le quiz"
+    },
+    "filtersStuck": {
+      "x": 8,
+      "y": 0,
+      "w": 374,
+      "h": 113
+    }
+  },
+  "shareTap": {
+    "x": 220.59375,
+    "y": 475.609375,
+    "width": 98.703125,
+    "height": 36
+  },
+  "quiz": {
+    "open": {
+      "x": 293.125,
+      "y": 26,
+      "width": 72.875,
+      "height": 33.390625
+    },
+    "taps": [
+      {
+        "x": 200,
+        "y": 451,
+        "width": 174,
+        "height": 102.5
+      },
+      {
+        "x": 200,
+        "y": 526.5,
+        "width": 174,
+        "height": 72
+      },
+      {
+        "x": 16,
+        "y": 552.5,
+        "width": 174,
+        "height": 100
+      }
+    ],
+    "result": [
+      "Andréa même texture · même priorité · même objectif Frisés et bouclés · 5 produits 100 %",
+      "Camille texture proche · même priorité · même objectif Bouclés · 7 produits 75 %",
+      "Chloé texture proche · même priorité · même objectif Crépus · 4 produits 75 %"
+    ],
+    "answers": {
+      "tex": "frises",
+      "concern": "Définition",
+      "need": "definir"
+    }
+  },
+  "andrea": {
+    "height": 4358,
+    "steps": [
+      {
+        "y": 775.3125,
+        "h": 2388.75,
+        "t": "01 Étape 1 : Laver Shampoing hydratant KEVIN MURPHY Je n'apporte pas beaucoup d'importance"
+      },
+      {
+        "y": 839.3125,
+        "h": 465.125,
+        "t": "01 Étape 1 : Laver Shampoing hydratant KEVIN MURPHY Je n'apporte pas beaucoup d'importance"
+      },
+      {
+        "y": 1360.4375,
+        "h": 378.125,
+        "t": "02 Étape 2 : Démêler Après shampoing adoucissant KEVIN MURPHY Je le laisse poser un peu pl"
+      },
+      {
+        "y": 1794.5625,
+        "h": 465.125,
+        "t": "03 Étape 3 : Nourrir Masque hydratant KEVIN MURPHY J'adore ce masque ! Je l'utilise de faç"
+      },
+      {
+        "y": 2315.6875,
+        "h": 407.0625,
+        "t": "04 Étape 4 : Coiffer Crème hydratante intensive longue durée L'OREAL PROFESSIONNEL Recomma"
+      },
+      {
+        "y": 2778.75,
+        "h": 385.3125,
+        "t": "05 Étape 5 : Définir Crème-en-Gelée Activatrice de Définition L'OREAL PROFESSIONNEL Dernie"
+      }
+    ]
+  }
+}

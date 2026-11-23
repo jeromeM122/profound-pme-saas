@@ -1,0 +1,461 @@
+[
+  {
+    "id": "cheveux-boucles-andrea",
+    "name": "Andréa",
+    "loc": "Guadeloupe",
+    "tex": [
+      "frises",
+      "boucles"
+    ],
+    "concerns": [
+      "Définition",
+      "Nutrition"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      },
+      {
+        "n": 5
+      }
+    ],
+    "brands": 2,
+    "img": {
+      "src": "/img/profils/cheveux-boucles-andrea.webp",
+      "w": 853,
+      "h": 1280
+    }
+  },
+  {
+    "id": "cheveux-boucles-camille",
+    "name": "Camille",
+    "loc": "Paris",
+    "tex": [
+      "boucles"
+    ],
+    "concerns": [
+      "Définition"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      },
+      {
+        "n": 5
+      },
+      {
+        "n": 6
+      },
+      {
+        "n": 7
+      }
+    ],
+    "brands": 6,
+    "img": {
+      "src": "/img/profils/cheveux-boucles-camille.webp",
+      "w": 592,
+      "h": 995
+    }
+  },
+  {
+    "id": "cheveux-crepus-chloe",
+    "name": "Chloé",
+    "loc": "Guadeloupe",
+    "tex": [
+      "crepus"
+    ],
+    "concerns": [
+      "Nutrition",
+      "Définition"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      }
+    ],
+    "brands": 2,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-chloe.webp",
+      "w": 468,
+      "h": 470
+    }
+  },
+  {
+    "id": "cheveux-crepus-epais-cindy",
+    "name": "Cindy",
+    "loc": "Guadeloupe",
+    "tex": [
+      "crepus"
+    ],
+    "concerns": [
+      "Hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      }
+    ],
+    "brands": 1,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-epais-cindy.webp",
+      "w": 1100,
+      "h": 825
+    }
+  },
+  {
+    "id": "cheveux-boucles-frises-gabou",
+    "name": "Gabou",
+    "loc": "Paris",
+    "tex": [
+      "boucles"
+    ],
+    "concerns": [],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      }
+    ],
+    "brands": 2,
+    "img": {
+      "src": "/img/profils/cheveux-boucles-frises-gabou.webp",
+      "w": 1100,
+      "h": 1442
+    }
+  },
+  {
+    "id": "cheveux-multi-textures-jessica",
+    "name": "Jessica",
+    "loc": "Guadeloupe",
+    "tex": [
+      "multi"
+    ],
+    "concerns": [
+      "Garder l’hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      }
+    ],
+    "brands": 3,
+    "img": {
+      "src": "/img/profils/cheveux-multi-textures-jessica.webp",
+      "w": 1100,
+      "h": 1467
+    }
+  },
+  {
+    "id": "cheveux-crepus-jessica-c",
+    "name": "Jessica C",
+    "loc": "France",
+    "tex": [
+      "crepus"
+    ],
+    "concerns": [
+      "Garder l’hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      }
+    ],
+    "brands": 1,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-jessica-c.webp",
+      "w": 1100,
+      "h": 1467
+    }
+  },
+  {
+    "id": "routine-capillaire-multitexture-joanna",
+    "name": "Joanna",
+    "loc": "Canada",
+    "tex": [
+      "multi"
+    ],
+    "concerns": [
+      "Nutrition",
+      "Définition"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      },
+      {
+        "n": 5
+      },
+      {
+        "n": 6
+      }
+    ],
+    "brands": 5,
+    "img": {
+      "src": "/img/profils/routine-capillaire-multitexture-joanna.webp",
+      "w": 1100,
+      "h": 1248
+    }
+  },
+  {
+    "id": "cheveux-crepus-kjp",
+    "name": "KJP",
+    "loc": "Toronto",
+    "tex": [
+      "crepus"
+    ],
+    "concerns": [
+      "Nutrition"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      }
+    ],
+    "brands": 1,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-kjp.webp",
+      "w": 719,
+      "h": 960
+    }
+  },
+  {
+    "id": "cheveux-crepus-multitextures-lauren",
+    "name": "Lauren",
+    "loc": "Guadeloupe",
+    "tex": [
+      "multi"
+    ],
+    "concerns": [
+      "Hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      }
+    ],
+    "brands": 3,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-multitextures-lauren.webp",
+      "w": 1100,
+      "h": 733
+    }
+  },
+  {
+    "id": "soin-locks-lindsay",
+    "name": "Lindsay",
+    "loc": "Guadeloupe",
+    "tex": [
+      "locs"
+    ],
+    "concerns": [
+      "Garder l’hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      }
+    ],
+    "brands": 1,
+    "img": {
+      "src": "/img/profils/soin-locks-lindsay.webp",
+      "w": 554,
+      "h": 619
+    }
+  },
+  {
+    "id": "cheveux-frises-michoune",
+    "name": "Michoune",
+    "loc": "Guadeloupe",
+    "tex": [
+      "frises"
+    ],
+    "concerns": [
+      "Cuir chevelu sensible"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      }
+    ],
+    "brands": 3,
+    "img": {
+      "src": "/img/profils/cheveux-frises-michoune.webp",
+      "w": 736,
+      "h": 839
+    }
+  },
+  {
+    "id": "cheveux-crepus-poreux-naiza",
+    "name": "NaÏza",
+    "loc": "Guadeloupe",
+    "tex": [
+      "crepus"
+    ],
+    "concerns": [
+      "Garder l’hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      }
+    ],
+    "brands": 1,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-poreux-naiza.webp",
+      "w": 736,
+      "h": 994
+    }
+  },
+  {
+    "id": "cheveux-crepus-selene",
+    "name": "Sélène",
+    "loc": "Paris",
+    "tex": [
+      "crepus"
+    ],
+    "concerns": [
+      "Nutrition"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      }
+    ],
+    "brands": 2,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-selene.webp",
+      "w": 735,
+      "h": 700
+    }
+  },
+  {
+    "id": "cheveux-crepus-multitextures-yannick",
+    "name": "Yannick",
+    "loc": "Guadeloupe",
+    "tex": [
+      "multi"
+    ],
+    "concerns": [
+      "Nutrition",
+      "Hydratation"
+    ],
+    "steps": [
+      {
+        "n": 1
+      },
+      {
+        "n": 2
+      },
+      {
+        "n": 3
+      },
+      {
+        "n": 4
+      }
+    ],
+    "brands": 2,
+    "img": {
+      "src": "/img/profils/cheveux-crepus-multitextures-yannick.webp",
+      "w": 736,
+      "h": 736
+    }
+  }
+]
