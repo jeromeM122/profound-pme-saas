@@ -1,5 +1,5 @@
 node_modules/
-out/frames/
 out/*.log
-out/sheet_*.png
 out/cov_v_small.png
+out/frames/
+out/sheet_*.png

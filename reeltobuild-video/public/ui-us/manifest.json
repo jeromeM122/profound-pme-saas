@@ -1,0 +1,77 @@
+{
+  "locale": "us",
+  "capturedAt": "2026-11-23T15:32:07.029Z",
+  "source": "https://reeltobuild.com/?region=us",
+  "ruler": [
+    {
+      "value": 377,
+      "budget": "≈ $1,331",
+      "summary": "Floor area 377 sqft·"
+    },
+    {
+      "value": 360,
+      "budget": "≈ $1,279",
+      "summary": "Floor area 360 sqft·"
+    },
+    {
+      "value": 350,
+      "budget": "≈ $1,266",
+      "summary": "Floor area 350 sqft·"
+    },
+    {
+      "value": 340,
+      "budget": "≈ $1,245",
+      "summary": "Floor area 340 sqft·"
+    },
+    {
+      "value": 330,
+      "budget": "≈ $1,225",
+      "summary": "Floor area 330 sqft·"
+    },
+    {
+      "value": 320,
+      "budget": "≈ $1,211",
+      "summary": "Floor area 320 sqft·"
+    },
+    {
+      "value": 310,
+      "budget": "≈ $1,173",
+      "summary": "Floor area 310 sqft·"
+    },
+    {
+      "value": 300,
+      "budget": "≈ $1,135",
+      "summary": "Floor area 300 sqft·"
+    },
+    {
+      "value": 290,
+      "budget": "≈ $1,121",
+      "summary": "Floor area 290 sqft·"
+    },
+    {
+      "value": 280,
+      "budget": "≈ $1,101",
+      "summary": "Floor area 280 sqft·"
+    },
+    {
+      "value": 270,
+      "budget": "≈ $1,058",
+      "summary": "Floor area 270 sqft·"
+    },
+    {
+      "value": 260,
+      "budget": "≈ $1,045",
+      "summary": "Floor area 260 sqft·"
+    },
+    {
+      "value": 250,
+      "budget": "≈ $994",
+      "summary": "Floor area 250 sqft·"
+    },
+    {
+      "value": 240,
+      "budget": "≈ $974",
+      "summary": "Floor area 240 sqft·"
+    }
+  ]
+}

@@ -11,6 +11,27 @@ Sources des vidéos promotionnelles de [reeltobuild.com](https://reeltobuild.com
 | `ReelToBuild_Main-16x9.mp4` | 1920 × 1080, H.264 + AAC (site, YouTube) | 39 s |
 | `ReelToBuild_Short-9x16.mp4` | 1080 × 1920, H.264 + AAC (version courte) | 15 s |
 | `ReelToBuild_Cover-9x16.png` / `ReelToBuild_Cover-16x9.png` | miniatures | — |
+| `ReelToBuild_US-Main-9x16.mp4` | version US, 1080 × 1920 | 39 s |
+| `ReelToBuild_US-Main-16x9.mp4` | version US, 1920 × 1080 | 39 s |
+| `ReelToBuild_US-Short-9x16.mp4` | version US courte, 1080 × 1920 | 15 s |
+| `ReelToBuild_US-Cover-9x16.png` / `ReelToBuild_US-Cover-16x9.png` | miniatures US | — |
+
+## Version US
+
+Interface capturée sur `reeltobuild.com/?region=us` (anglais, unités impériales, dollars, enseignes US),
+captures dans `public/ui-us/`, textes dans `src/locale.tsx`. Exemple réel « Laying 24 x 24 in porcelain
+floor tile » : la règle « Floor area » passe de 377 à 240 sqft, les carreaux de 109 à 69, le thinset de
+9 à 6 sacs de 50 lb, le budget estimé de ≈ $1,331 à ≈ $974. Lien de démonstration : `https://youtu.be/tilefloor24`.
+
+| Séquence | Légende US |
+|---|---|
+| Problème | You found the tutorial. / But do you know what to buy? |
+| Solution | Just paste the link. |
+| Transformation | Your tutorial becomes a detailed shopping list. |
+| Personnalisation | Scale quantities to your actual space. |
+| Confiance | See where every quantity comes from. |
+| Résultat | Your project is ready to go. |
+| Signature | From video to project. — Try it free at reeltobuild.com |
 
 ## Storyboard (version principale)
 
@@ -43,14 +64,16 @@ externe, aucun droit tiers).
 
 ```bash
 npm install
-node scripts/capture.js     # recapture l'interface réelle (réseau vers reeltobuild.com requis)
-python3 scripts/prep.py     # repères de la règle, recadrages, position du champ
+node scripts/capture.js fr  # recapture l'interface réelle FR (réseau vers reeltobuild.com requis)
+node scripts/capture.js us  # idem, version US (public/ui-us)
+python3 scripts/prep.py fr && python3 scripts/prep.py us   # repères de la règle, recadrages -> src/data-*.json
 python3 scripts/music.py    # musique + bruitages (public/audio)
 npx remotion studio src/index.ts   # édition visuelle
-node scripts/render.js all  # covers + 3 vidéos dans out/
+node scripts/render.js all  # 4 covers + 6 vidéos (FR et US) dans out/
+node scripts/render.js videos US-Main-9x16   # une seule composition
 ```
 
 - Timing des séquences, durées et bruitages : `src/timeline.json`
-- Scènes : `src/scenes.tsx` — légendes par défaut dans chaque scène, légendes de la version courte dans `src/Video.tsx`
+- Scènes : `src/scenes.tsx` ; tous les textes (FR et US) et données propres à chaque langue : `src/locale.tsx`
 - Couleurs et polices (reprises du site) : `src/lib.tsx`, `src/fonts.tsx`
 - Le rendu utilise le Chromium de Playwright ; changer `REMOTION_CHROME` si besoin.

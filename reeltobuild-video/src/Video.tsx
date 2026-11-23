@@ -4,18 +4,9 @@ import { ease, SceneTime } from './lib';
 import { SCENES, SceneProps } from './scenes';
 import { Fonts } from './fonts';
 import timeline from './timeline.json';
+import { LocaleCtx, LOCALES, LocaleId } from './locale';
 
 export type Version = 'main' | 'short';
-
-// Légendes propres à la version courte (15 s).
-const CAPTIONS: Record<Version, Record<string, SceneProps['caption']>> = {
-  main: {},
-  short: {
-    paste: { text: 'Collez le lien *d’un tuto.*' },
-    transform: { text: 'Obtenez la *liste d’achats détaillée.*', sub: 'Exemple réel : pose de carrelage au sol 60 × 60 cm' },
-    ruler: { text: 'Adaptée à vos *dimensions réelles.*' },
-  },
-};
 
 const XFADE = 0.45; // secondes de fondu enchaîné entre scènes
 
@@ -26,12 +17,20 @@ const Fade: React.FC<{ children: React.ReactNode; first: boolean }> = ({ childre
   return <AbsoluteFill style={{ opacity: p, transform: `scale(${1.015 - 0.015 * p})` }}>{children}</AbsoluteFill>;
 };
 
-export const Film: React.FC<{ version: Version }> = ({ version }) => {
+export const Film: React.FC<{ version: Version; locale?: LocaleId }> = ({ version, locale = 'fr' }) => {
   const cfg = timeline[version];
+  const L = LOCALES[locale];
+  // Légendes propres à la version courte (15 s).
+  const short: Record<string, { text: string; sub?: string }> = {
+    paste: { text: L.t.short.paste },
+    transform: { text: L.t.short.transform, sub: L.t.transformSub },
+    ruler: { text: L.t.short.ruler },
+  };
   const { fps, durationInFrames } = useVideoConfig();
   const frame = useCurrentFrame();
   void frame;
   return (
+    <LocaleCtx.Provider value={L}>
     <AbsoluteFill style={{ background: '#0b1f3b' }}>
       <Fonts />
       {cfg.scenes.map((sc, i) => {
@@ -43,7 +42,7 @@ export const Film: React.FC<{ version: Version }> = ({ version }) => {
           <Sequence key={sc.id} from={from} durationInFrames={dur} name={sc.id}>
             <SceneTime.Provider value={{ rate: sc.rate, offset: sc.offset }}>
               <Fade first={i === 0}>
-                <Comp caption={CAPTIONS[version][sc.id]} />
+                <Comp caption={version === 'short' ? short[sc.id] : undefined} />
               </Fade>
             </SceneTime.Provider>
           </Sequence>
@@ -54,5 +53,6 @@ export const Film: React.FC<{ version: Version }> = ({ version }) => {
         volume={(f) => interpolate(f, [0, 6], [0, 0.72], { extrapolateRight: 'clamp' })}
       />
     </AbsoluteFill>
+    </LocaleCtx.Provider>
   );
 };

@@ -1,5 +1,5 @@
 // Rendu des vidéos finales et des covers.
-// Usage : node scripts/render.js [stills|frames <comp> <s1,s2,..>|all]
+// Usage : node scripts/render.js [stills [ids..]|videos [ids..]|frames <comp> <s1,s2,..>|all]
 const path = require('path');
 const fs = require('fs');
 const { bundle } = require('@remotion/bundler');
@@ -27,14 +27,14 @@ fs.mkdirSync(OUT, { recursive: true });
     return;
   }
   if (mode === 'stills' || mode === 'all') {
-    for (const id of ['Cover-9x16', 'Cover-16x9']) {
+    for (const id of (args.length ? args : ['Cover-9x16', 'Cover-16x9', 'US-Cover-9x16', 'US-Cover-16x9'])) {
       const c = await comp(id);
       await renderStill({ ...opts, composition: c, output: path.join(OUT, `ReelToBuild_${id}.png`) });
       console.log('still', id);
     }
   }
   if (mode === 'all' || mode === 'videos') {
-    const list = args.length ? args : ['Main-9x16', 'Main-16x9', 'Short-9x16'];
+    const list = args.length ? args : ['Main-9x16', 'Main-16x9', 'Short-9x16', 'US-Main-9x16', 'US-Main-16x9', 'US-Short-9x16'];
     for (const id of list) {
       const c = await comp(id);
       const output = path.join(OUT, `ReelToBuild_${id}.mp4`);

@@ -1,19 +1,18 @@
 import React from 'react';
 import { AbsoluteFill, Img, staticFile } from 'remotion';
 import { BODY, C, Caption, Card, DarkBg, DISPLAY, ease, lerp, LightBg, Phone, PHONE, Ring, SCREEN, Shot, Stage, Tag, Touch, useLayout, useSec } from './lib';
-import rows from './rows.json';
-import ruler from './ruler.json';
-import inputPos from './inputpos.json';
+import { useL } from './locale';
 
 type CaptionText = { text: string; sub?: string };
 export type SceneProps = { caption?: CaptionText };
 
-const R = rows as Record<string, { h: number; w: number; compact: number }>;
+type Rows = Record<string, { h: number; w: number; compact: number }>;
 
 /** Capture « carte » dont on retire la marge de capture (pad, en px image) et qu'on arrondit. */
 const CardShot: React.FC<{ name: string; srcW: number; srcH: number; pad: number; width: number; radius: number; cropH?: number; style?: React.CSSProperties; shadow?: boolean }> = ({
   name, srcW, srcH, pad, width, radius, cropH, style, shadow = true,
 }) => {
+  const L = useL();
   const k = width / (srcW - pad * 2);
   const h = ((cropH ?? srcH) - pad * 2) * k;
   return (
@@ -28,7 +27,7 @@ const CardShot: React.FC<{ name: string; srcW: number; srcH: number; pad: number
         ...style,
       }}
     >
-      <Img src={staticFile(`ui/${name}.png`)} style={{ position: 'absolute', left: -pad * k, top: -pad * k, width: srcW * k }} />
+      <Img src={staticFile(`${L.dir}/${name}.png`)} style={{ position: 'absolute', left: -pad * k, top: -pad * k, width: srcW * k }} />
     </div>
   );
 };
@@ -42,6 +41,7 @@ const PITCH = TILE + GAP;
 
 const TutorialVideo: React.FC = () => {
   const t = useSec();
+  const L = useL();
   const laid = 5 + Math.floor(Math.max(0, t) / 0.32); // carreaux posés
   const cols = 3;
   const rowsN = 8;
@@ -134,8 +134,8 @@ const TutorialVideo: React.FC = () => {
       {/* habillage lecteur vidéo générique */}
       <AbsoluteFill style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 18%, transparent 62%, rgba(0,0,0,0.72) 100%)' }} />
       <div style={{ position: 'absolute', left: 36, right: 36, bottom: 92, color: '#fff', fontFamily: BODY }}>
-        <div style={{ fontSize: 22, fontWeight: 600, opacity: 0.8, letterSpacing: '0.02em', textTransform: 'uppercase' }}>Tuto rénovation</div>
-        <div style={{ fontSize: 34, fontWeight: 700, lineHeight: 1.15, marginTop: 8, letterSpacing: '-0.01em' }}>Poser du carrelage 60 × 60 dans une pièce</div>
+        <div style={{ fontSize: 22, fontWeight: 600, opacity: 0.8, letterSpacing: '0.02em', textTransform: 'uppercase' }}>{L.t.tutoKicker}</div>
+        <div style={{ fontSize: 34, fontWeight: 700, lineHeight: 1.15, marginTop: 8, letterSpacing: '-0.01em' }}>{L.t.tutoTitle}</div>
       </div>
       <div style={{ position: 'absolute', left: 36, right: 36, bottom: 56, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.3)' }}>
         <div style={{ width: `${(0.34 + (paused ? 2.45 : t) * 0.025) * 100}%`, height: '100%', borderRadius: 3, background: '#fff' }} />
@@ -170,6 +170,7 @@ const TutorialVideo: React.FC = () => {
 
 const Question: React.FC<{ text: string; at: number; style: React.CSSProperties }> = ({ text, at, style }) => {
   const t = useSec();
+  const L = useL();
   const p = ease(t, at, at + 0.6);
   return (
     <div
@@ -218,21 +219,22 @@ const Question: React.FC<{ text: string; at: number; style: React.CSSProperties 
 
 export const ProblemScene: React.FC<SceneProps> = () => {
   const t = useSec();
+  const L = useL();
   const enter = ease(t, 0, 1.0);
   return (
     <AbsoluteFill>
       <DarkBg />
-      <Caption dark text="Vous avez trouvé *le tuto.*" at={0.25} out={2.2} />
-      <Caption dark text={'Mais savez-vous *quoi acheter ?*'} at={2.4} />
+      <Caption dark text={L.t.problemA} at={0.25} out={2.2} />
+      <Caption dark text={L.t.problemB} at={2.4} />
       <Stage>
         <div style={{ position: 'absolute', inset: 0, opacity: enter, transform: `translateY(${(1 - enter) * 90}px)` }}>
           <Phone screenBg="#000">
             <TutorialVideo />
           </Phone>
         </div>
-        <Question text="Combien de carreaux ?" at={2.75} style={{ left: 0, top: 300 }} />
-        <Question text="Quel mortier-colle ?" at={3.05} style={{ right: -10, top: 590 }} />
-        <Question text="Quels outils ?" at={3.35} style={{ left: 40, top: 880 }} />
+        <Question text={L.t.questions[0]} at={2.75} style={{ left: 0, top: 300 }} />
+        <Question text={L.t.questions[1]} at={3.05} style={{ right: -10, top: 590 }} />
+        <Question text={L.t.questions[2]} at={3.35} style={{ left: 40, top: 880 }} />
       </Stage>
     </AbsoluteFill>
   );
@@ -241,14 +243,18 @@ export const ProblemScene: React.FC<SceneProps> = () => {
 // =====================================================================
 // 2. LA SOLUTION — coller le lien dans ReelToBuild
 // =====================================================================
-const KS = SCREEN.w / inputPos.homeW; // px capture (3x) → px écran du téléphone
-const CARD = { x: inputPos.x * KS, y: inputPos.y * KS, w: inputPos.w * KS, h: inputPos.h * KS };
 const SX = PHONE.x + 14;
 const SY = PHONE.y + 14;
-const FOCUS = { x: SX + CARD.x + CARD.w / 2, y: SY + CARD.y + CARD.h / 2 };
+const pasteGeom = (ip: { x: number; y: number; w: number; h: number; homeW: number }) => {
+  const KS = SCREEN.w / ip.homeW; // px capture (3x) → px écran du téléphone
+  const CARD = { x: ip.x * KS, y: ip.y * KS, w: ip.w * KS, h: ip.h * KS };
+  return { KS, CARD, FOCUS: { x: SX + CARD.x + CARD.w / 2, y: SY + CARD.y + CARD.h / 2 } };
+};
 
 export const PasteScene: React.FC<SceneProps> = ({ caption }) => {
   const t = useSec();
+  const L = useL();
+  const { KS, CARD, FOCUS } = pasteGeom(L.data.inputpos);
   const enter = ease(t, 0, 0.9);
   const zoom = ease(t, 1.25, 2.3, 'inout');
   const Z = lerp(1, 1.72, zoom);
@@ -268,7 +274,7 @@ export const PasteScene: React.FC<SceneProps> = ({ caption }) => {
   return (
     <AbsoluteFill>
       <LightBg />
-      <Caption text={caption?.text ?? 'Collez simplement *le lien.*'} sub={caption?.sub} at={0.3} />
+      <Caption text={caption?.text ?? L.t.paste} sub={caption?.sub} at={0.3} />
       <Stage style={{ WebkitMaskImage: `linear-gradient(to bottom, rgba(0,0,0,${1 - zoom}) 0px, #000 110px)`, maskImage: `linear-gradient(to bottom, rgba(0,0,0,${1 - zoom}) 0px, #000 110px)`, height: 2000 }}>
         <div
           style={{
@@ -281,9 +287,9 @@ export const PasteScene: React.FC<SceneProps> = ({ caption }) => {
           }}
         >
           <Phone screenBg={C.paper}>
-            <Img src={staticFile('ui/screen_home.png')} style={{ width: SCREEN.w, display: 'block' }} />
+            <Img src={staticFile(`${L.dir}/screen_home.png`)} style={{ width: SCREEN.w, display: 'block' }} />
             <div style={{ position: 'absolute', left: CARD.x, top: CARD.y, width: CARD.w, transform: `scale(${pop})` }}>
-              <Img src={staticFile(`ui/${state}.png`)} style={{ width: CARD.w, display: 'block' }} />
+              <Img src={staticFile(`${L.dir}/${state}.png`)} style={{ width: CARD.w, display: 'block' }} />
             </div>
           </Phone>
           <Touch x={FOCUS.x} y={SY + CARD.y + CARD.h * 0.685} at={2.45} until={3.3} press={[2.9]} />
@@ -299,7 +305,7 @@ export const PasteScene: React.FC<SceneProps> = ({ caption }) => {
               }}
             >
               <div style={{ fontFamily: BODY, fontWeight: 700, fontSize: 22, letterSpacing: '0.12em', color: C.brand, textAlign: 'center', marginBottom: 10, opacity: 1 - fly }}>
-                LIEN DU TUTO COPIÉ
+                {L.t.pillLabel}
               </div>
               <div
                 style={{
@@ -321,7 +327,7 @@ export const PasteScene: React.FC<SceneProps> = ({ caption }) => {
                   <path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" />
                   <path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" />
                 </svg>
-                https://youtu.be/carrelage60
+                {L.t.demoLink}
               </div>
             </div>
           ) : null}
@@ -342,7 +348,7 @@ export const PasteScene: React.FC<SceneProps> = ({ caption }) => {
 const LIST_W = 860;
 const KL = LIST_W / 1050;
 type Item = { name: string; srcW: number; cropH: number; ml?: number };
-const LIST_ITEMS: Item[] = [
+const listItems = (R: Rows): Item[] => [
   { name: 'project_header', srcW: 1026, cropH: 519, ml: 12 },
   { name: 'cat_sols', srcW: 978, cropH: 183, ml: 36 },
   { name: 'row_carrelage', srcW: 1050, cropH: R.row_carrelage.compact },
@@ -354,10 +360,12 @@ const LIST_ITEMS: Item[] = [
   { name: 'row_croisillons', srcW: 1050, cropH: R.row_croisillons.compact },
   { name: 'row_peigne', srcW: 1050, cropH: R.row_peigne.compact },
 ];
-const LIST_TOTAL = LIST_ITEMS.reduce((s, it) => s + it.cropH * KL + 6, 0);
 
 export const TransformScene: React.FC<SceneProps> = ({ caption }) => {
   const t = useSec();
+  const L = useL();
+  const LIST_ITEMS = listItems(L.data.rows as Rows);
+  const LIST_TOTAL = LIST_ITEMS.reduce((s, it) => s + it.cropH * KL + 6, 0);
   const swap = ease(t, 0.15, 0.6);
   const scroll = ease(t, 1.0, 4.1, 'inout') * (LIST_TOTAL - 1180);
   const focus = ease(t, 4.2, 4.85);
@@ -366,7 +374,7 @@ export const TransformScene: React.FC<SceneProps> = ({ caption }) => {
   return (
     <AbsoluteFill>
       <LightBg />
-      <Caption text={caption?.text ?? 'Votre tutoriel devient une *liste de courses détaillée.*'} sub={caption?.sub ?? 'Exemple réel : pose de carrelage au sol 60 × 60 cm'} at={0.25} />
+      <Caption text={caption?.text ?? L.t.transform} sub={caption?.sub ?? L.t.transformSub} at={0.25} />
       <Stage>
         {swap < 1 ? (
           <div style={{ position: 'absolute', left: 70, top: 300, opacity: 1 - swap, transform: `scale(${1 - swap * 0.03})` }}>
@@ -406,11 +414,11 @@ export const TransformScene: React.FC<SceneProps> = ({ caption }) => {
               <Shot name="row_carrelage" srcW={1050} width={1050 * KF} />
             </Card>
             <Ring x={850 * KF} y={150 * KF} w={180 * KF} h={170 * KF} p={ease(t, 4.9, 5.3)} />
-            <Tag text="Quantité calculée" p={ease(t, 4.95, 5.4)} style={{ right: -6, top: -78 }} />
-            <Ring x={128 * KF} y={418 * KF} w={900 * KF} h={372 * KF} p={ease(t, 5.45, 5.85)} />
-            <Tag text="Références produit" p={ease(t, 5.5, 5.95)} style={{ right: -6, top: 292 }} />
-            <Ring x={6 * KF} y={808 * KF} w={730 * KF} h={142 * KF} p={ease(t, 6.0, 6.4)} />
-            <Tag text="Où l'acheter" p={ease(t, 6.05, 6.5)} style={{ left: 600, top: 760 }} />
+            <Tag text={L.t.tags[0]} p={ease(t, 4.95, 5.4)} style={{ right: -6, top: -78 }} />
+            <Ring x={128 * KF} y={L.focus.refs[0] * KF} w={900 * KF} h={L.focus.refs[1] * KF} p={ease(t, 5.45, 5.85)} />
+            <Tag text={L.t.tags[1]} p={ease(t, 5.5, 5.95)} style={{ right: -6, top: 292 }} />
+            <Ring x={6 * KF} y={L.focus.buy[0] * KF} w={820 * KF} h={L.focus.buy[1] * KF} p={ease(t, 6.0, 6.4)} />
+            <Tag text={L.t.tags[2]} p={ease(t, 6.05, 6.5)} style={{ left: 600, top: L.focus.buyTag }} />
           </div>
         ) : null}
       </Stage>
@@ -421,7 +429,6 @@ export const TransformScene: React.FC<SceneProps> = ({ caption }) => {
 // =====================================================================
 // 4. LA PERSONNALISATION — la règle graduée
 // =====================================================================
-const RV = ruler as { value: number; x: number; y: number; w: number; h: number; budget: string }[];
 const KR = 900 / 1074;
 const KRow = 900 / 1050;
 const STEP0 = 1.95;
@@ -429,6 +436,9 @@ const STEP = 0.25;
 
 export const RulerScene: React.FC<SceneProps> = ({ caption }) => {
   const t = useSec();
+  const L = useL();
+  const RV = L.data.ruler;
+  const R = L.data.rows as Rows;
   const idx = Math.max(0, Math.min(RV.length - 1, Math.floor((t - STEP0) / STEP) + 1));
   const cur = RV[idx];
   const enter = ease(t, 0, 0.8);
@@ -445,8 +455,8 @@ export const RulerScene: React.FC<SceneProps> = ({ caption }) => {
   return (
     <AbsoluteFill>
       <LightBg />
-      <Caption text={caption?.text ?? 'Adaptez les quantités à vos *dimensions réelles.*'} sub={caption?.sub} at={0.25} />
-      <ResultPills p={done} items={[`${first.value} m² → ${last.value} m²`, '112 → 71 carreaux', `Budget ${first.budget} → ${last.budget}`]} />
+      <Caption text={caption?.text ?? L.t.ruler} sub={caption?.sub} at={0.25} />
+      <ResultPills p={done} items={[`${first.value} ${L.areaUnit} → ${last.value} ${L.areaUnit}`, `${L.tiles[0]} → ${L.tiles[1]} ${L.tilesUnit}`, `${L.budgetLabel} ${first.budget} → ${last.budget}`]} />
       <Stage>
         <div style={{ position: 'absolute', inset: 0, opacity: enter, transform: `translateY(${(1 - enter) * 60}px)` }}>
           <Card style={{ position: 'absolute', left: 50, top: 20, width: 900, height: 625 * KR }} radius={40}>
@@ -510,36 +520,35 @@ const ResultPills: React.FC<{ items: string[]; p: number }> = ({ items, p }) => 
 // =====================================================================
 // 5. LA CONFIANCE — statuts et détail du calcul
 // =====================================================================
-const BADGES = [
-  { name: 'badge_valide', w: 183, h: 72, text: 'Quantité nommée ou vue dans la source' },
-  { name: 'badge_estime', w: 192, h: 78, text: 'Rendement ou conditionnement non sourcé' },
-  { name: 'badge_confirmer', w: 300, h: 72, text: 'Un contrôle a relevé une incohérence' },
-];
+const BADGES = ['badge_valide', 'badge_estime', 'badge_confirmer'];
 const KC = 0.86;
-const CALC_LINES = [1500, 1727, 1825, 2120];
 
 export const TrustScene: React.FC<SceneProps> = ({ caption }) => {
   const t = useSec();
+  const L = useL();
   const out = ease(t, 2.15, 2.6, 'inout');
   const rowIn = ease(t, 2.2, 2.85);
   const open = ease(t, 2.95, 3.6, 'inout');
   const pan = ease(t, 3.05, 3.95, 'inout');
   const calc = t >= 2.95;
-  const fullH = (calc ? 2448 : 1170) * KC;
-  const visH = lerp(1170, 2448, open) * KC;
+  const R = L.data.rows as Rows;
+  const calcH = L.id === 'fr' ? 2448 : 2394;
+  const fullH = (calc ? calcH : R.row_carrelage.h) * KC;
+  const visH = lerp(R.row_carrelage.h, calcH, open) * KC;
   return (
     <AbsoluteFill>
       <LightBg />
-      <Caption text={caption?.text ?? "Comprenez d'où viennent *les quantités.*"} sub={caption?.sub} at={0.25} />
+      <Caption text={caption?.text ?? L.t.trust} sub={caption?.sub} at={0.25} />
       <Stage>
         {out < 1 ? (
           <div style={{ position: 'absolute', left: 60, top: 120, width: 880, opacity: 1 - out, transform: `translateY(${-out * 80}px)` }}>
-            {BADGES.map((b, i) => {
+            {BADGES.map((name, i) => {
+              const b = { name, text: L.t.badges[i] };
               const p = ease(t, 0.3 + i * 0.3, 0.9 + i * 0.3);
               return (
                 <Card key={b.name} style={{ display: 'flex', alignItems: 'center', gap: 34, padding: '40px 44px', marginBottom: 28, opacity: p, transform: `translateX(${(1 - p) * 60}px)` }}>
                   <div style={{ width: 440, flexShrink: 0 }}>
-                    <Img src={staticFile(`ui/${b.name}.png`)} style={{ height: (b.h / 72) * 104, display: 'block' }} />
+                    <Img src={staticFile(`${L.dir}/${b.name}.png`)} style={{ height: 104, display: 'block' }} />
                   </div>
                   <div style={{ fontFamily: BODY, fontSize: 36, fontWeight: 500, color: C.mute, lineHeight: 1.25, letterSpacing: '-0.01em' }}>{b.text}</div>
                 </Card>
@@ -552,7 +561,7 @@ export const TrustScene: React.FC<SceneProps> = ({ caption }) => {
           <div style={{ position: 'absolute', left: 108, top: lerp(150, -840, pan) + (1 - rowIn) * 200, opacity: rowIn }}>
             <Card style={{ width: 1050 * KC, height: visH, position: 'relative' }} radius={44}>
               <Shot name={calc ? 'row_carrelage_calc' : 'row_carrelage'} srcW={1050} width={1050 * KC} cropH={fullH / KC} />
-              {CALC_LINES.map((ly, i) => {
+              {L.calcLines.map((ly, i) => {
                 const p = ease(t, 3.95 + i * 0.25, 4.35 + i * 0.25);
                 return (
                   <div
@@ -588,6 +597,7 @@ export const TrustScene: React.FC<SceneProps> = ({ caption }) => {
 // =====================================================================
 export const ResultScene: React.FC<SceneProps> = ({ caption }) => {
   const t = useSec();
+  const L = useL();
   const enter = ease(t, 0, 0.8);
   const scroll = ease(t, 0.3, 3.6, 'inout');
   const KLs = (SCREEN.w / 400) * (360 / 1080);
@@ -596,18 +606,18 @@ export const ResultScene: React.FC<SceneProps> = ({ caption }) => {
   return (
     <AbsoluteFill>
       <LightBg />
-      <Caption text={caption?.text ?? 'Votre projet est prêt à *passer à l’action.*'} sub={caption?.sub ?? 'Budget et quantités estimés : à vérifier avant achat.'} at={0.25} />
+      <Caption text={caption?.text ?? L.t.result} sub={caption?.sub ?? L.t.resultSub} at={0.25} />
       <Stage>
         <div style={{ position: 'absolute', inset: 0, opacity: enter, transform: `translateY(${(1 - enter) * 60}px)` }}>
           <Phone screenBg={C.paper}>
             <Img
-              src={staticFile('ui/list_top.png')}
+              src={staticFile(`${L.dir}/list_top.png`)}
               style={{ position: 'absolute', left: 20 * (SCREEN.w / 400), top: 70 - scroll * 2600, width: 1080 * KLs }}
             />
           </Phone>
         </div>
         <div style={{ position: 'absolute', left: -30, top: 130, opacity: b, transform: `translateX(${(1 - b) * -60}px) rotate(-2deg)` }}>
-          <CardShot name="budget_card_35" srcW={1152} srcH={1407} pad={36} width={470} radius={30} />
+          <CardShot name="budget_card" srcW={1152} srcH={1407} pad={36} width={470} radius={30} />
         </div>
         <div style={{ position: 'absolute', left: 470, top: 800, opacity: e, transform: `translateY(${(1 - e) * 60}px) rotate(1.5deg)` }}>
           <CardShot name="export_bar" srcW={1134} srcH={732} pad={30} width={540} radius={34} />
@@ -622,6 +632,7 @@ export const ResultScene: React.FC<SceneProps> = ({ caption }) => {
 // =====================================================================
 export const SignatureScene: React.FC<SceneProps> = () => {
   const t = useSec();
+  const L = useL();
   const { vertical } = useLayout();
   const logo = ease(t, 0.1, 0.9);
   const l1 = ease(t, 0.55, 1.25);
@@ -658,10 +669,10 @@ export const SignatureScene: React.FC<SceneProps> = () => {
             transform: `translateY(${(1 - l1) * 30}px)`,
           }}
         >
-          De la vidéo au <span style={{ color: C.brand }}>projet.</span>
+          {L.t.sig1} <span style={{ color: C.brand }}>{L.t.sig2}</span>
         </div>
         <div style={{ marginTop: 64, fontFamily: BODY, fontWeight: 500, fontSize: 40, color: '#cbd5e1', opacity: l2, transform: `translateY(${(1 - l2) * 20}px)` }}>
-          Essayez gratuitement sur
+          {L.t.tryAt}
         </div>
         <div style={{ marginTop: 14, position: 'relative', opacity: l3, transform: `translateY(${(1 - l3) * 20}px)` }}>
           <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: 96, letterSpacing: '-0.03em', color: '#fff' }}>reeltobuild.com</div>

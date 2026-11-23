@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
+import { useL } from './locale';
 
 // ---------- Charte (tokens repris du CSS de reeltobuild.com) ----------
 export const C = {
@@ -145,9 +146,10 @@ export const Caption: React.FC<{ text: string; at: number; out?: number; dark?: 
 // ---------- Capture d'interface ----------
 export const Shot: React.FC<{ name: string; width: number; cropH?: number; srcW: number; style?: React.CSSProperties }> = ({ name, width, cropH, srcW, style }) => {
   const k = width / srcW;
+  const L = useL();
   return (
     <div style={{ width, height: cropH !== undefined ? cropH * k : undefined, overflow: 'hidden', ...style }}>
-      <Img src={staticFile(`ui/${name}.png`)} style={{ width, display: 'block' }} />
+      <Img src={staticFile(`${L.dir}/${name}.png`)} style={{ width, display: 'block' }} />
     </div>
   );
 };

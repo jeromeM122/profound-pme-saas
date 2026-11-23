@@ -1,18 +1,66 @@
-// Captures de l'interface RÉELLE de https://reeltobuild.com (version FR) avec Playwright.
+// Captures de l'interface RÉELLE de https://reeltobuild.com avec Playwright (version FR ou US).
 // - Aucune requête POST n'atteint le serveur : la soumission d'un lien est interceptée et
 //   mise en attente pour filmer l'état « Analyse en cours » sans lancer d'analyse.
 // - Aucun site marchand n'est visité (les liens « Acheter chez » ne sont jamais cliqués).
-// Usage : node scripts/capture.js
+// Usage : node scripts/capture.js [fr|us]
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const OUT = path.join(__dirname, '..', 'public', 'ui');
-const URL = 'https://reeltobuild.com/?region=fr';
-const DEMO_LINK = 'https://youtu.be/carrelage60';
-const SLIDER_VALUES = [35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22];
+const LOCALES = {
+  fr: {
+    out: 'ui', url: 'https://reeltobuild.com/?region=fr', locale: 'fr-FR', demoLink: 'https://youtu.be/carrelage60',
+    slider: [35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22],
+    paste: 'Coller le lien', extract: 'Extraire la liste', analyzing: 'Analyse en cours', importTxt: 'Importer',
+    step1: 'Lecture de la source', takes: 'Comptez',
+    trade: 'Lot Sols', title: 'Pose de carrelage', share: 'Partager ce projet (Story / Reel / Pin)',
+    budgetTitle: 'Budget et chantier', budget: 'Budget estimé', pricesLoading: 'Estimation des prix', fit: 'Adapter à mon chantier', close: 'Fermer les réglages',
+    panel: ['Surface au sol', 'Marge de perte'], area: 'Surface au sol', list: 'Liste de matériel',
+    rows: [
+      ['row_carrelage', 'Carrelage grès cérame 60 x 60 cm'],
+      ['row_plinthe', 'Plinthe carrelage assortie 8 x 60 cm'],
+      ['row_mortier', 'Mortier-colle C2 sac 25 kg'],
+      ['row_joint', 'Joint carrelage gris sac 5 kg'],
+      ['row_primaire', "Primaire d'accrochage bidon 5 L"],
+      ['row_croisillons', 'Croisillons 2 mm sachet de 200'],
+      ['row_peigne', 'Peigne à colle denture 10 mm'],
+    ],
+    calc: 'Voir le calcul', prep: 'Préparation du projet', prepMust: ['validées', 'à confirmer'],
+    cat1: ['Sols, Murs & Faïences', 'Faïences'], cat2: ['Consommables de pose, Outils & Sécurité', 'Sécurité'], money: '€',
+    estimated: 'ESTIMÉ', validated: 'VALIDÉ', confirm: 'À CONFIRMER',
+    deliv: ['Faites-vous livrer', 'articles'], exportBtns: ['Exporter en CSV', 'Copier la liste', 'Partager'],
+    hyp: ['Hypothèses de calcul', 'Mortier-colle'],
+  },
+  us: {
+    out: 'ui-us', url: 'https://reeltobuild.com/?region=us', locale: 'en-US', demoLink: 'https://youtu.be/tilefloor24',
+    slider: [377, 360, 350, 340, 330, 320, 310, 300, 290, 280, 270, 260, 250, 240],
+    paste: 'Paste the link', extract: 'Extract the list', analyzing: 'Analyzing', importTxt: 'Import',
+    step1: 'Reading the source', takes: '10 to 40 seconds',
+    trade: 'Flooring', title: 'Laying 24 x 24 in', share: 'Share this project (Story / Reel / Pin)',
+    budgetTitle: 'Budget and job', budget: 'Estimated budget', pricesLoading: 'Estimating prices', fit: 'Fit to my job', close: 'Close settings',
+    panel: ['Floor area', 'Waste allowance'], area: 'Floor area', list: 'Supply list',
+    rows: [
+      ['row_carrelage', 'Porcelain floor tile 24 x 24 in'],
+      ['row_plinthe', 'Porcelain bullnose trim 3 x 24 in'],
+      ['row_mortier', 'Polymer-modified thinset 50 lb'],
+      ['row_joint', 'Sanded tile grout gray 10 lb'],
+      ['row_primaire', 'Floor primer 1 gal'],
+      ['row_croisillons', 'Tile spacers 1/16 in bag of 200'],
+      ['row_peigne', 'Notched trowel 3/8 in'],
+    ],
+    calc: 'See the calculation', prep: 'Project readiness', prepMust: ['validated', 'to confirm'],
+    cat1: ['Floors, walls & tiles', 'tiles'], cat2: ['Installation supplies, tools & safety', 'safety'], money: '$',
+    estimated: 'ESTIMATED', validated: 'VALIDATED', confirm: 'TO CONFIRM',
+    deliv: ['Get it delivered', 'items'], exportBtns: ['Export CSV', 'Copy the list', 'Share'],
+    hyp: ['Calculation assumptions', 'Thinset'],
+  },
+};
+const LOC = process.argv[2] || 'fr';
+const L = LOCALES[LOC];
+const OUT = path.join(__dirname, '..', 'public', L.out);
+const URL = L.url;
 fs.mkdirSync(OUT, { recursive: true });
-const manifest = { capturedAt: new Date().toISOString(), source: URL, ruler: [] };
+const manifest = { locale: LOC, capturedAt: new Date().toISOString(), source: URL, ruler: [] };
 
 // Marque le plus petit ancêtre de `startSel` (ou de l'élément contenant `startText`)
 // dont le texte contient toutes les chaînes `must` (et aucune de `mustNot`).
@@ -53,22 +101,24 @@ async function shot(loc, name, pad = 0) {
 }
 
 async function stickyBar(page, visible) {
-  await page.evaluate((visible) => {
+  await page.evaluate(([visible, label]) => {
     const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    while (w.nextNode()) if (w.currentNode.textContent.trim() === 'Faites-vous livrer') {
+    while (w.nextNode()) if (w.currentNode.textContent.trim() === label) {
       let e = w.currentNode.parentElement;
       while (e && e !== document.body) { const pos = getComputedStyle(e).position; if (pos === 'fixed' || pos === 'sticky') { e.style.visibility = visible ? '' : 'hidden'; break; } e = e.parentElement; }
     }
-  }, visible);
+  }, [visible, L.deliv[0]]);
 }
 
 async function freshPage(browser) {
-  const page = await browser.newPage({ viewport: { width: 400, height: 866 }, deviceScaleFactor: 3, locale: 'fr-FR' });
+  const page = await browser.newPage({ viewport: { width: 400, height: 866 }, deviceScaleFactor: 3, locale: L.locale });
   await page.goto(URL, { waitUntil: 'networkidle' });
   await page.addStyleTag({ content: '*{caret-color:transparent!important} ::-webkit-scrollbar{display:none}' });
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(2000);
   return page;
 }
+
+const pricesReady = (page) => page.waitForFunction(([b, l]) => document.body.innerText.includes(b) && !document.body.innerText.includes(l), [L.budget, L.pricesLoading], { timeout: 45000 });
 
 (async () => {
   const browser = await chromium.launch();
@@ -76,104 +126,81 @@ async function freshPage(browser) {
   // ---------- 1. Accueil + saisie du lien + analyse ----------
   let page = await freshPage(browser);
   await page.screenshot({ path: path.join(OUT, 'screen_home.png') }); console.log('✓ screen_home');
-  let card = await tag(page, 'input', { startSel: 'input[type=url]', must: ['Coller le lien'], mustNot: ['Importer'] });
+  let card = await tag(page, 'input', { startSel: 'input[type=url]', must: [L.paste], mustNot: [L.importTxt] });
   await shot(card, 'input_empty', 12);
   await page.route('**/*', r => (r.request().method() !== 'GET' ? undefined : r.continue()));
-  await page.locator('input[type=url]').fill(DEMO_LINK);
+  await page.locator('input[type=url]').fill(L.demoLink);
   await page.waitForTimeout(400);
-  card = await tag(page, 'input', { startSel: 'input[type=url]', must: ['Extraire la liste'], mustNot: ['Importer'] });
+  card = await tag(page, 'input', { startSel: 'input[type=url]', must: [L.extract], mustNot: [L.importTxt] });
   await shot(card, 'input_filled', 12);
   await page.locator('input[type=url]').press('Enter');
   const t0 = Date.now();
   for (const [i, at] of [[0, 1200], [1, 6500], [2, 13000], [3, 21000]]) {
     await page.waitForTimeout(Math.max(0, at - (Date.now() - t0)));
     if (i === 0) {
-      card = await tag(page, 'input', { startSel: 'input[type=url]', must: ['Analyse en cours'], mustNot: ['Importer'] });
+      card = await tag(page, 'input', { startSel: 'input[type=url]', must: [L.analyzing], mustNot: [L.importTxt] });
       await shot(card, 'input_loading', 12);
     }
-    const prog = await tag(page, 'prog', { startText: 'Lecture de la source', must: ['Comptez', 'Lecture de la source'] });
+    const prog = await tag(page, 'prog', { startText: L.step1, must: [L.takes, L.step1] });
     await shot(prog, `progress_${i}`, 12);
   }
   await page.close();
 
-  // ---------- 2. Exemple « Lot Sols » : liste, règle, calcul ----------
+  // ---------- 2. Exemple carrelage : liste, calcul, export (valeur de la vidéo) ----------
   page = await freshPage(browser);
-  await page.getByRole('radio', { name: 'Lot Sols' }).click();
-  await page.waitForFunction(() => /Budget estimé/.test(document.body.innerText), null, { timeout: 30000 });
+  await page.getByRole('radio', { name: L.trade }).click();
+  await page.waitForFunction((t) => document.body.innerText.includes(t), L.title);
+  await pricesReady(page);
   await page.waitForTimeout(1500);
-  await shot(await tag(page, 'head', { startText: 'Partager ce projet (Story / Reel / Pin)', must: ['Pose de carrelage', 'Lot Sols'], mustNot: ['Budget estimé', 'Liste de matériel'] }), 'project_header', 12);
-  await shot(await tag(page, 'budget', { startText: 'Budget et chantier', must: ['Budget estimé', 'Adapter à mon chantier'] }), 'budget_card', 12);
-  await page.getByRole('button', { name: 'Adapter à mon chantier' }).click();
+  await shot(await tag(page, 'head', { startText: L.share, must: [L.title, L.trade], mustNot: [L.budget, L.list] }), 'project_header', 12);
+  await shot(await tag(page, 'budget', { startText: L.budgetTitle, must: [L.budget, L.fit] }), 'budget_card', 12);
+  fs.copyFileSync(path.join(OUT, 'budget_card.png'), path.join(OUT, `budget_card_${L.slider[0]}.png`));
+  await stickyBar(page, false);
+  const rowTag = (id, name) => tag(page, id, { startSel: `label:${name}`, must: [L.calc] });
+
+  await shot(await tag(page, 'prep', { startText: L.prep, must: L.prepMust }), 'prep_sols', 6);
+  await shot(await tag(page, 'cat1', { startText: L.cat1[0], nth: 1, must: [L.cat1[1], L.money], mustNot: [L.rows[0][1]] }), 'cat_sols', 4);
+  await shot(await tag(page, 'cat2', { startText: L.cat2[0], nth: 1, must: [L.cat2[1], L.money], mustNot: [L.rows[2][1]] }), 'cat_conso', 4).catch(e => console.log('cat2', e.message));
+  for (const [id, name] of L.rows) await shot(await rowTag(id, name), id, 16);
+  await shot(await tag(page, 'badge', { startText: L.estimated, must: [L.estimated] }), 'badge_estime', 3);
+  await shot(await tag(page, 'badge', { startText: L.validated, must: [L.validated] }), 'badge_valide', 3);
+  const rc = await rowTag('rcalc', L.rows[0][1]);
+  await rc.locator('summary', { hasText: L.calc }).click();
+  await page.waitForTimeout(700);
+  await shot(await rowTag('rcalc', L.rows[0][1]), 'row_carrelage_calc', 16);
+  await rc.locator('summary', { hasText: L.calc }).click();
+  await page.waitForTimeout(400);
+  await stickyBar(page, true);
+  await shot(await tag(page, 'deliv', { startText: L.deliv[0], must: L.deliv, mustNot: [L.prep] }), 'delivery', 10);
+  await shot(await tag(page, 'export', { startText: L.exportBtns[0], must: L.exportBtns, mustNot: [L.hyp[0]] }), 'export_bar', 10);
+  await shot(await tag(page, 'hyp', { startText: L.hyp[0], must: L.hyp, mustNot: [L.exportBtns[0]] }), 'hypotheses', 8).catch(e => console.log('hyp', e.message));
+  await shot(await tag(page, 'list', { startText: L.list, must: [L.list, L.exportBtns[0]] }), 'list_full', 0);
+
+  // ---------- 3. Règle graduée : une capture par valeur ----------
+  await page.getByRole('button', { name: L.fit }).click();
   await page.waitForTimeout(800);
   await stickyBar(page, false);
-
-  const rows = [
-    ['row_carrelage', 'Carrelage grès cérame 60 x 60 cm'],
-    ['row_plinthe', 'Plinthe carrelage assortie 8 x 60 cm'],
-    ['row_mortier', 'Mortier-colle C2 sac 25 kg'],
-    ['row_joint', 'Joint carrelage gris sac 5 kg'],
-    ['row_primaire', "Primaire d'accrochage bidon 5 L"],
-    ['row_croisillons', 'Croisillons 2 mm sachet de 200'],
-    ['row_peigne', 'Peigne à colle denture 10 mm'],
-  ];
-  const rowTag = (id, name) => tag(page, id, { startSel: `label:${name}`, must: ['Voir le calcul'] });
-
   const slider = page.locator('input[type=range]').first();
-  for (const v of SLIDER_VALUES) {
-    await slider.fill(String(v));
-    await page.waitForTimeout(900);
-    const panel = await tag(page, 'panel', { startSel: 'input[type=range]', must: ['Surface au sol', 'Marge de perte'], mustNot: ['Budget estimé'] });
+  for (const [k, v] of L.slider.entries()) {
+    if (k > 0) await slider.fill(String(v)); // la 1re valeur est celle de la vidéo (non modifiée)
+    await page.waitForTimeout(1200);
+    const panel = await tag(page, 'panel', { startSel: 'input[type=range]', must: L.panel, mustNot: [L.budget] });
     await shot(panel, `ruler_${v}`, 0);
-    await shot(await rowTag('rc', rows[0][1]), `ruler_row_carrelage_${v}`, 16);
-    await shot(await rowTag('rm', rows[2][1]), `ruler_row_mortier_${v}`, 16);
-    const info = await page.evaluate(() => {
-      const t = document.body.innerText;
-      return { budget: (t.match(/Budget estimé\n+([^\n]+)/) || [])[1], summary: (t.match(/Surface au sol [^\n]+/) || [])[0] };
-    });
+    await shot(await rowTag('rc', L.rows[0][1]), `ruler_row_carrelage_${v}`, 16);
+    await shot(await rowTag('rm', L.rows[2][1]), `ruler_row_mortier_${v}`, 16);
+    const info = await page.evaluate(([b, a]) => {
+      const t = document.body.innerText.replace(/[  ]/g, ' ');
+      return { budget: (t.match(new RegExp(b + '\\n+([^\\n]+)')) || [])[1], summary: (t.match(new RegExp(a + ' [^\\n]+')) || [])[0] };
+    }, [L.budget, L.area]);
     manifest.ruler.push({ value: v, ...info });
     console.log('  ', v, info);
   }
-  // Retour à la valeur de la vidéo pour la liste et le calcul
-  await slider.fill('35'); await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Fermer les réglages' }).click().catch(() => {});
-  await page.waitForTimeout(600);
-  await shot(await tag(page, 'budget', { startText: 'Budget et chantier', must: ['Budget estimé', 'Adapter à mon chantier'] }), 'budget_card_35', 12);
-
-  await shot(await tag(page, 'prep', { startText: 'Préparation du projet', must: ['validées', 'à confirmer'] }), 'prep_sols', 6);
-  await shot(await tag(page, 'cat1', { startText: 'Sols, Murs & Faïences', nth: 1, must: ['Faïences', '€'], mustNot: ['Carrelage grès'] }), 'cat_sols', 4);
-  await shot(await tag(page, 'cat2', { startText: 'Consommables de pose, Outils & Sécurité', nth: 1, must: ['Sécurité', '€'], mustNot: ['Mortier-colle'] }), 'cat_conso', 4).catch(e => console.log('cat2', e.message));
-  for (const [id, name] of rows) await shot(await rowTag(id, name), id, 16);
-  for (const label of ['ESTIMÉ', 'VALIDÉ']) {
-    const b = await tag(page, 'badge', { startText: label, must: [label] });
-    await shot(b, 'badge_' + (label === 'VALIDÉ' ? 'valide' : 'estime'), 3);
-  }
-  // Calcul détaillé (ligne carrelage)
-  const rc = await rowTag('rcalc', rows[0][1]);
-  await rc.locator('summary', { hasText: 'Voir le calcul' }).click();
-  await page.waitForTimeout(700);
-  await shot(await rowTag('rcalc', rows[0][1]), 'row_carrelage_calc', 16);
-  await rc.locator('summary', { hasText: 'Voir le calcul' }).click();
-  await page.waitForTimeout(400);
-
-  // Liste complète, livraison, export
-  await stickyBar(page, true);
-  await shot(await tag(page, 'deliv', { startText: 'Faites-vous livrer', must: ['Faites-vous livrer', 'articles'] , mustNot: ['Préparation']}), 'delivery', 10);
-  await shot(await tag(page, 'export', { startText: 'Exporter en CSV', must: ['Exporter en CSV', 'Copier la liste', 'Partager'], mustNot: ['Hypothèses'] }), 'export_bar', 10);
-  await shot(await tag(page, 'hyp', { startText: 'Hypothèses de calcul', must: ['Hypothèses de calcul', 'Mortier-colle'] , mustNot: ['Exporter']}), 'hypotheses', 8).catch(e => console.log('hyp', e.message));
-  const list = await tag(page, 'list', { startText: 'Liste de matériel', must: ['Liste de matériel', 'Exporter en CSV'] });
-  await shot(list, 'list_full', 0);
   await page.close();
 
-  // ---------- 3. Badge « À CONFIRMER » (exemple Peinture, ligne Bâche) ----------
+  // ---------- 4. Badge « à confirmer » (exemple Peinture, affiché par défaut) ----------
   page = await freshPage(browser);
-  await page.waitForTimeout(1500);
-  await shot(await tag(page, 'badge', { startText: 'À CONFIRMER', must: ['À CONFIRMER'] }), 'badge_confirmer', 3);
-  await shot(await tag(page, 'prep', { startText: 'Préparation du projet', must: ['validées', 'à confirmer'] }), 'prep_peinture', 6);
-  await page.close();
-
-  // ---------- 4. Logo du site ----------
-  page = await freshPage(browser);
-  await shot(page.locator('header a').first(), 'site_logo', 6);
+  await shot(await tag(page, 'badge', { startText: L.confirm, must: [L.confirm] }), 'badge_confirmer', 3);
+  await shot(await tag(page, 'prep', { startText: L.prep, must: L.prepMust }), 'prep_peinture', 6);
   await page.close();
 
   fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));

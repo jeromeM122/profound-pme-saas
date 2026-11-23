@@ -12,5 +12,11 @@ export const Root: React.FC = () => (
     <Composition id="Short-9x16" component={Film} defaultProps={{ version: 'short' as const }} fps={FPS} width={1080} height={1920} durationInFrames={timeline.short.duration * FPS} />
     <Still id="Cover-9x16" component={Cover} width={1080} height={1920} />
     <Still id="Cover-16x9" component={Cover} width={1920} height={1080} />
+    {/* Version US (interface reeltobuild.com/?region=us, légendes en anglais) */}
+    <Composition id="US-Main-9x16" component={Film} defaultProps={{ version: 'main' as const, locale: 'us' as const }} fps={FPS} width={1080} height={1920} durationInFrames={timeline.main.duration * FPS} />
+    <Composition id="US-Main-16x9" component={Film} defaultProps={{ version: 'main' as const, locale: 'us' as const }} fps={FPS} width={1920} height={1080} durationInFrames={timeline.main.duration * FPS} />
+    <Composition id="US-Short-9x16" component={Film} defaultProps={{ version: 'short' as const, locale: 'us' as const }} fps={FPS} width={1080} height={1920} durationInFrames={timeline.short.duration * FPS} />
+    <Still id="US-Cover-9x16" component={Cover} defaultProps={{ locale: 'us' as const }} width={1080} height={1920} />
+    <Still id="US-Cover-16x9" component={Cover} defaultProps={{ locale: 'us' as const }} width={1920} height={1080} />
   </>
 );
